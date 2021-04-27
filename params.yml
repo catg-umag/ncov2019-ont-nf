@@ -1,0 +1,16 @@
+
+outdir: out_guppy_v5
+sequencing:    
+    fast5: /home/jaldridge/covid_sequencing/0_sequencing/1_seq/SARS_COV_2-20200629/20200629_1926_MN18412_FAN65829_b215ed1b/fast5_pass
+    #fast5: '/home/jaldridge/covid_sequencing/0_sequencing/1_seq/SARS_COV_2-20200629/20200629_1926_MN18412_FAN65829_b215ed1b/fast5_pass/'
+    fastq:  # Vacio si es que se hace bc hac #'/home/jaldridge/covid_sequencing/0_sequencing/1_seq/SARS_COV_2-20200629/20200629_1926_MN18412_FAN65829_b215ed1b/fastq_pass/barcode0[1-6]'
+    #summary: /home/jaldridge/covid_sequencing/0_sequencing/1_seq/SARS_COV_2-20200629/20200629_1926_MN18412_FAN65829_b215ed1b/sequencing_summary_FAN65829_b0d10d0f.txt.tmp
+    summary: /home/jaldridge/covid_sequencing/0_sequencing/1_seq/SARS_COV_2-20200629/20200629_1926_MN18412_FAN65829_b215ed1b/sequencing_summary_FAN65829_b0d10d0f.txt.tmp
+    primers_scheme: nCoV-2019/V3
+    id: 20200310
+    guppy_config: dna_r9.4.1_450bps_hac.cfg
+    barcodes: EXP-NBD104 
+    guppy_device: 'cuda:0,1'
+    primers: /home/jaldridge/2021/covid/artic-ncov2019/primer_schemes
+    basecalling: True # True para correr bc hac
+samples: [["barcode01",'s1'], ["barcode02", 's2'], ["barcode03", 's3'], ["barcode04", 's4'], ["barcode05", 's5']  , ["barcode06","s6"] ]
