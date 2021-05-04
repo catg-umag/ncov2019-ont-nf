@@ -4,18 +4,20 @@ workflow nanopore {
    take:
   fast5
   fastq
-
+  sample_names
    main:
     basecalling(fast5)
-    reads_to_filter = params.sequencing.basecalling == true ? basecalling.out.pass.flatten() : fastq
-    sample_names = Channel.from(params.samples)
-    reads_to_filter = reads_to_filter.map { it -> [it.baseName, it] }.join(sample_names)
-    changeSampleName(reads_to_filter)
-    filtering(changeSampleName.out)
-    pipeline(filtering.out)
-    sorted_bam = pipeline.out.bam.flatten().filter { !(it.Name.contains('trimmed')) }
-    sorted_bam \
-    | (depth & coverage)
+    reads_to_filter = params.sequencing.basecalling ? basecalling.out.pass.flatten() : fastq
+    reads_to_filter
+  | map { it -> [it.baseName, it] }
+  | join(sample_names)
+  | filtering
+  pipeline(filtering.out.filter)
+
+  pipeline.out.bam
+   | flatten
+   | filter { !(it.Name.contains('trimmed')) }
+   | (calculateDepth & coverageStats)
 }
 
 process basecalling {
@@ -46,34 +48,26 @@ process basecalling {
   """
 }
 
-process changeSampleName {
-  cpus 2
-  publishDir "${params.outdir}/basecalling", mode: 'copy'
-  input:
-    tuple val(bc_id), path(fastq), val(sample_name)
-  output:
-    tuple val(bc_id), path(sample_name)
-
-  script:
-  """
-  mv ${fastq} ${sample_name}
-  """
-}
 process filtering {
+  tag "${sample_name}"
   label 'artic'
+  publishDir "${params.outdir}/basecalling", mode: 'copy', pattern: "${sample_name}"
   publishDir "${params.outdir}/artic/filter", mode: 'copy'
   cpus 2
   input:
-    tuple val(bc_id), path(fastq)
+    tuple val(bc_id), path("${sample_name}"), val(sample_name)
   output:
-    tuple val(bc_id), path('filter*')
+    tuple val(sample_name), path('filter*'), val(bc_id), emit: filter
+    path("${sample_name}")
+
   script:
   """
-  artic guppyplex --min-length 400 --max-length 700 --directory ${fastq} --prefix filter
+  artic guppyplex --min-length 400 --max-length 700 --directory ${sample_name} --prefix filter
   """
 }
 
 process pipeline {
+  tag "${sample_name}"
   label 'artic'
   cpus 4
   publishDir "${params.outdir}/artic/pipeline/${fastq.baseName}", mode: 'copy'
@@ -82,20 +76,22 @@ process pipeline {
   publishDir "${params.outdir}/artic/pipeline/bam/", mode: 'copy', pattern: '*.sorted.bam'
 
   input:
-  tuple val(bc_id), path(fastq)
+  tuple val(sample_name), path(fastq), val(bc_id)
+
   output:
   path('*')
   path("*.sorted.bam") , emit: bam
 
   script:
   id = fastq.baseName - ~/filter_/
-  fast5 = params.sequencing.basecalling == true ? "${params.sequencing.fast5}" : "${params.sequencing.fast5}/${bc_id}"
+  fast5 = params.sequencing.basecalling == true ? "${params.sequencing.fast5}" : "${params.sequencing.fast5}"
   """
-artic minion --normalise 200 --threads 4 --scheme-directory ${params.sequencing.primers} --read-file ${fastq} --fast5-directory ${fast5} --sequencing-summary ${params.sequencing.summary} ${params.sequencing.primers_scheme} ${fastq.baseName}
+    artic minion --normalise 200 --threads 4 --scheme-directory ${params.sequencing.primers} --read-file ${fastq} --fast5-directory ${fast5} --sequencing-summary ${params.sequencing.summary} ${params.sequencing.primers_scheme} ${fastq.baseName}
   """
 }
 
-process depth {
+process calculateDepth {
+  tag "${bam.baseName}"
   label 'samtools'
   cpus 2
   publishDir "${params.outdir}/depths",mode: 'copy'
@@ -110,7 +106,8 @@ process depth {
   """
 }
 
-process coverage {
+process coverageStats {
+  tag "${bam.baseName}"
   label 'samtools'
   cpus 2
   publishDir "${params.outdir}/coverage",mode: 'copy'

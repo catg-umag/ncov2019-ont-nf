@@ -1,0 +1,13 @@
+outdir: #ourdir
+sequencing:
+    fast5: #path to fast5
+    fastq:  # if the pipeline start with fastq
+    summary: #sequencing summary
+    primers_scheme: # primer scheme used.
+    id: #id run
+    guppy_config: # config guppy (for hac basecalling)
+    barcodes: #barcodes kit (for hac basecalling)
+    guppy_device: 'cuda:0,1'
+    primers: #path to directory from primer_schemes
+    basecalling: False #True for hac basecalling, False to start with fastq
+samples: [["barcode01",'sample1'], ["barcode02", 'sample2'], ["barcode03", 'ssample3'], ["barcode04", 'sample4'], ["barcode05", 'sample5']  , ["barcode06","sample6"] ]
