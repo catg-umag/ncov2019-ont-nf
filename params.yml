@@ -1,4 +1,7 @@
-outdir: out_minkonww_v12
+outdir: output
+data: '/home/jaldridge/2021/covid/template/data.csv' ##Sample_id,Barcode,Nombre,Fecha,location,age,sex
+len_min_amplicon: 400
+len_max_amplicon: 700
 sequencing:
     fast5: '/home/jaldridge/covid_sequencing/0_sequencing/1_seq/SARS_COV_2-20200629/20200629_1926_MN18412_FAN65829_b215ed1b/fast5_pass/'
     fastq:  '/home/jaldridge/covid_sequencing/0_sequencing/1_seq/SARS_COV_2-20200629/20200629_1926_MN18412_FAN65829_b215ed1b/fastq_pass/barcode0[1-6]'
@@ -9,5 +12,3 @@ sequencing:
     barcodes: EXP-NBD104
     guppy_device: 'cuda:0,1'
     primers: /home/jaldridge/2021/covid/artic-ncov2019/primer_schemes
-    basecalling: False
-samples: [["barcode01",'sample1'], ["barcode02", 'sample2'], ["barcode03", 'ssample3'], ["barcode04", 'sample4'], ["barcode05", 'sample5']  , ["barcode06","sample6"] ]

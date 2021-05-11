@@ -2,12 +2,15 @@ nextflow.enable.dsl = 2
 
 workflow nanopore {
    take:
-  fast5
-  fastq
-  sample_names
+    fast5
+    fastq
+    data
+
    main:
+    sample_names = data.splitCsv().map { it -> [it[1], it[0]] }
+
     basecalling(fast5)
-    reads_to_filter = params.sequencing.basecalling ? basecalling.out.pass.flatten() : fastq
+    reads_to_filter = params.sequencing.fastq == null ? basecalling.out.pass.flatten() : fastq
     reads_to_filter
   | map { it -> [it.baseName, it] }
   | join(sample_names)
@@ -31,7 +34,7 @@ process basecalling {
   path("basecalled_${params.sequencing.id}/pass/barcode*"), emit: pass
 
   when:
-  params.sequencing.basecalling
+  params.sequencing.fastq == null
 
   script:
   """
@@ -62,7 +65,7 @@ process filtering {
 
   script:
   """
-  artic guppyplex --min-length 400 --max-length 700 --directory ${sample_name} --prefix filter
+  artic guppyplex --min-length ${params.len_min_amplicon} --max-length ${params.len_max_amplicon} --directory ${sample_name} --prefix filter
   """
 }
 
@@ -81,12 +84,12 @@ process pipeline {
   output:
   path('*')
   path("*.sorted.bam") , emit: bam
+  path("*.consensus.fasta"), emit: consensus
+  path("*.pass.vcf.gz"), emit: vcf
 
   script:
-  id = fastq.baseName - ~/filter_/
-  fast5 = params.sequencing.basecalling == true ? "${params.sequencing.fast5}" : "${params.sequencing.fast5}"
   """
-    artic minion --normalise 200 --threads 4 --scheme-directory ${params.sequencing.primers} --read-file ${fastq} --fast5-directory ${fast5} --sequencing-summary ${params.sequencing.summary} ${params.sequencing.primers_scheme} ${fastq.baseName}
+    artic minion --normalise 200 --threads 4 --scheme-directory ${params.sequencing.primers} --read-file ${fastq} --fast5-directory ${params.sequencing.fast5} --sequencing-summary ${params.sequencing.summary} ${params.sequencing.primers_scheme} ${fastq.baseName}
   """
 }
 
