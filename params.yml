@@ -1,7 +1,8 @@
 outdir: output
-data: '/home/jaldridge/2021/covid/template/data.csv' ##Sample_id,Barcode,Nombre,Fecha,location,age,sex
+samples_data: '/home/jaldridge/2021/covid/template/data.csv' ##Sample_id,Barcode,Nombre,Fecha,location,age,sex
 len_min_amplicon: 400
 len_max_amplicon: 700
+gisaid_clades: 'nanopore-sarscov2/data/clades_gisaid.csv'
 sequencing:
     fast5: '/home/jaldridge/covid_sequencing/0_sequencing/1_seq/SARS_COV_2-20200629/20200629_1926_MN18412_FAN65829_b215ed1b/fast5_pass/'
     fastq:  '/home/jaldridge/covid_sequencing/0_sequencing/1_seq/SARS_COV_2-20200629/20200629_1926_MN18412_FAN65829_b215ed1b/fastq_pass/barcode0[1-6]'
