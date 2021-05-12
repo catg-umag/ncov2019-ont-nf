@@ -21,7 +21,7 @@ workflow nanopore {
 
   pipeline.out.bam
    | flatten
-   | filter { !(it.Name.contains('trimmed')) }
+   | filter { (it.Name.contains('primertrimmed.rg')) }
    | (calculateDepth & coverageStats)
 
   assign_pangolin(pipeline.out.consensus.collect())
@@ -30,8 +30,11 @@ workflow nanopore {
   assign_clade(pipeline.out.vcf)
   clades = assign_clade.out.map { name, clade -> [name, clade.readLines()[0]] }
 
-  report_data = clades.join(pangolin).map { name, clade, pang -> [name.replaceAll(/filter_/, ''), clade, pang] }
-  report_data = data.splitCsv().join(report_data)
+  nextstrain_clade(assign_pangolin.out.all_consensus)
+  nextstrain_clades = nextstrain_clade.out.splitCsv(sep:";").map{name,clade -> [name.replaceAll(/filter_/,""),clade]}
+
+  report_data = clades.join(pangolin).map{name,clade,pang -> [name.replaceAll(/filter_/,""),clade,pang]}
+  report_data = (data.splitCsv().join(report_data)).join(nextstrain_clades)
 
   name = coverageStats.out.sample_names.map { it -> it }.collect()
   cov = coverageStats.out.cov.map {  it.readLines()[1].tokenize("\t")[6] }.collect()
@@ -214,4 +217,23 @@ process fillData {
   """
   fill_excel.py ${name} ${cov} ${params.gisaid_template}
   """
+}
+
+process nextstrain_clade{
+  echo true
+  
+  input:
+  path(consensus)
+
+  output:
+  path("nextclade_short.csv")
+  script:
+  """
+  echo holi ${consensus}
+  ${params.nextclade_files.binary} --input-fasta=${consensus}  --input-root-seq=${params.nextclade_files.reference} --genes=E,M,N,ORF1a,ORF1b,ORF3a,ORF6,ORF7a,ORF7b,ORF8,ORF9b,S --input-gene-map=${params.nextclade_files.gene_map} --input-tree=${params.nextclade_files.tree} --input-qc-config=${params.nextclade_files.qc} --output-csv=output/nextclade.csv --output-dir=output/ 
+  cp output/nextclade.csv .
+  sed -i 's#/ARTIC/nanopolish MN908947.3##g' nextclade.csv
+  cat nextclade.csv | cut -d ';' -f1,2 > nextclade_short.csv
+  """
+
 }

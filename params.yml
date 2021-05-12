@@ -4,6 +4,12 @@ len_min_amplicon: 400
 len_max_amplicon: 700
 gisaid_clades: 'nanopore-sarscov2/data/clades_gisaid.csv'
 gisaid_template: '/home/jaldridge/2021/covid/template/20210222_EpiCoV_BulkUpload_Template.xlsx'
+nextclade_files:
+    binary: /home/jaldridge/2021/covid/nextclade-Linux-x86_64         
+    reference: /home/jaldridge/2021/covid/nextclade/reference.fasta
+    gene_map:  /home/jaldridge/2021/covid/nextclade/genemap.gff
+    tree: /home/jaldridge/2021/covid/nextclade/tree.json
+    qc: /home/jaldridge/2021/covid/nextclade/qc.json
 sequencing:
     fast5: '/home/jaldridge/covid_sequencing/0_sequencing/1_seq/SARS_COV_2-20200629/20200629_1926_MN18412_FAN65829_b215ed1b/fast5_pass/'
     fastq:  '/home/jaldridge/covid_sequencing/0_sequencing/1_seq/SARS_COV_2-20200629/20200629_1926_MN18412_FAN65829_b215ed1b/fastq_pass/barcode0[1-6]'
