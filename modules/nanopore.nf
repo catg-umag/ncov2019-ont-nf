@@ -5,6 +5,7 @@ workflow nanopore {
     fast5
     fastq
     data
+    gisaid_clades
 
    main:
     sample_names = data.splitCsv().map { it -> [it[1], it[0]] }
@@ -21,6 +22,16 @@ workflow nanopore {
    | flatten
    | filter { !(it.Name.contains('trimmed')) }
    | (calculateDepth & coverageStats)
+
+  assign_pangolin(pipeline.out.consensus.collect())
+  pangolin = assign_pangolin.out.short_pangolin.splitCsv()
+
+  assign_clade(pipeline.out.vcf)
+  clades = assign_clade.out.map { name, clade -> [name, clade.readLines()[0]] }
+
+  report_data = clades.join(pangolin).map { name, clade, pang -> [name.replaceAll(/filter_/, ''), clade, pang] }
+  report_data = data.splitCsv().join(report_data)
+  report(report_data)
 }
 
 process basecalling {
@@ -123,4 +134,60 @@ process coverageStats {
   """
   samtools coverage ${bam} -o ${bam.simpleName}.coverage
   """
+}
+
+process assign_pangolin {
+  cpus 2
+  label 'pangolin'
+  publishDir "${params.outdir}/", mode: 'copy', pattern: 'all_consensus.fasta'
+  publishDir "${params.outdir}/pangolin/", mode: 'copy', pattern: '*.csv'
+
+  input:
+  path(all_consensus)
+
+  output:
+  path('all_consensus.fasta')
+  path('*.csv')
+  path ("final_report_short.csv"), emit: short_pangolin
+  script:
+  """
+  cat ${all_consensus} > all_consensus.fasta
+  pangolin all_consensus.fasta --outfile lineages.csv
+  cat lineages.csv | cut -d ',' -f1,2 > final_report_short.csv
+  sed -i 's#/ARTIC/nanopolish_MN908947.3##g' final_report_short.csv
+  """
+}
+
+process assign_clade {
+  cpus 2
+
+  label 'pandas'
+  input:
+  path(vcf)
+
+  output:
+  tuple val("${vcf.simpleName}"), path('clade.txt')
+  script:
+  """
+  assign_clade.py ${vcf} ${params.gisaid_clades} > clade.txt
+  """
+}
+
+// feo feo muy feo xD
+process report {
+  cpus 2
+  label 'pandas'
+  publishDir "${params.outdir}/", mode: 'copy'
+  echo true
+ input:
+  tuple val(sample_name), val(barcode), val(name), val(clade), val(lineage) //colection_date,sex,age,location
+
+ output:
+  path('final_reportt.csv')
+
+ script:
+  """
+ echo ${name},${clade},${lineage} >> ${params.report}
+ cp ${params.report} final_reportt.csv
+ """
 }
