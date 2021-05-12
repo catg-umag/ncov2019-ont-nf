@@ -5,7 +5,7 @@ workflow nanopore {
     fast5
     fastq
     data
-    gisaid_clades,
+    gisaid_clades
     gisaid_template
 
    main:
@@ -40,6 +40,8 @@ workflow nanopore {
   cov = coverageStats.out.cov.map {  it.readLines()[1].tokenize("\t")[6] }.collect()
 
   fillData(name, cov, gisaid_template)
+
+  //report(report_data)
 }
 
 process basecalling {
@@ -137,7 +139,9 @@ process coverageStats {
   path(bam)
 
   output:
-  path("${bam.simpleName}.coverage")
+  path("${bam.simpleName}.coverage"), emit: cov
+  val("${bam.simpleName}"), emit: sample_names
+
   script:
   """
   samtools coverage ${bam} -o ${bam.simpleName}.coverage
@@ -154,7 +158,7 @@ process assign_pangolin {
   path(all_consensus)
 
   output:
-  path('all_consensus.fasta')
+  path('all_consensus.fasta'), emit: all_consensus
   path('*.csv')
   path ("final_report_short.csv"), emit: short_pangolin
   script:
