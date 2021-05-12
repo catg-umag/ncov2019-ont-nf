@@ -5,7 +5,8 @@ workflow nanopore {
     fast5
     fastq
     data
-    gisaid_clades
+    gisaid_clades,
+    gisaid_template
 
    main:
     sample_names = data.splitCsv().map { it -> [it[1], it[0]] }
@@ -31,7 +32,11 @@ workflow nanopore {
 
   report_data = clades.join(pangolin).map { name, clade, pang -> [name.replaceAll(/filter_/, ''), clade, pang] }
   report_data = data.splitCsv().join(report_data)
-  report(report_data)
+
+  name = coverageStats.out.sample_names.map { it -> it }.collect()
+  cov = coverageStats.out.cov.map {  it.readLines()[1].tokenize("\t")[6] }.collect()
+
+  fillData(name, cov, gisaid_template)
 }
 
 process basecalling {
@@ -186,8 +191,27 @@ process report {
   path('final_reportt.csv')
 
  script:
-  """
+ """
  echo ${name},${clade},${lineage} >> ${params.report}
  cp ${params.report} final_reportt.csv
  """
+}
+
+process fillData {
+  cpus 2
+  label 'openpyxl'
+  publishDir "${params.outdir}/excel_upload",mode: 'copy'
+  echo true
+  input:
+  val(cov)
+  val(name)
+  path(gisaid_template)
+
+  output:
+  path('Submitted.xlsx')
+
+  script:
+  """
+  fill_excel.py ${name} ${cov} ${params.gisaid_template}
+  """
 }
