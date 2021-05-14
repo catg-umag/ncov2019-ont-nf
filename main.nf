@@ -21,7 +21,6 @@ Channel
 fast5_dir = file(params.fast5_directory)
 fastq_dirs = params.fastq_directory != null ? Channel.fromPath(params.fastq_directory, type: 'dir') : null
 sequencing_summary = params.sequencing_summary != null ? file(params.sequencing_summary) : null
-primer_schemes_dir = file(params.artic_primer_schemes_directory)
 gisaid_clades = file(params.gisaid_clades)
 samples_data = file(params.sample_data)
 epicov_template = file(params.gisaid_template)
@@ -32,8 +31,7 @@ workflow {
     sample_names,
     fast5_dir,
     fastq_dirs,
-    sequencing_summary,
-    primer_schemes_dir)
+    sequencing_summary)
 
   GetStatistics(Assembly.out.bam)
 

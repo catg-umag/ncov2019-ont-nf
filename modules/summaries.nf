@@ -1,4 +1,4 @@
-nextflow.enable.dsl=2
+nextflow.enable.dsl = 2
 
 
 workflow GenerateSummaries {
@@ -16,7 +16,8 @@ workflow GenerateSummaries {
       samples_data,
       lineages,
       coverage_stats,
-      getReferenceCoveredStats.out.collect())
+      getReferenceCoveredStats.out.collect()
+    )
 }
 
 
