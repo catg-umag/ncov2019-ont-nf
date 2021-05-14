@@ -11,5 +11,5 @@ RUN chmod +x /usr/local/bin/nextclade
 
 RUN mkdir /opt/nextclade_data
 RUN cd /opt/nextclade_data && \
-    wget -qO- https://codeload.github.com/nextstrain/nextclade/tar.gz/master
+    wget -qO- https://codeload.github.com/nextstrain/nextclade/tar.gz/master \
         | tar -xz --strip=2 "nextclade-master/data"
