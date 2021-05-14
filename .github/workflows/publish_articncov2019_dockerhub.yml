@@ -25,7 +25,7 @@ jobs:
 
       - name: Read VERSION file
         id: getversion
-        run: echo "::set-output name=version::$(cat ./containers/nextclade/VERSION)"
+        run: echo "::set-output name=version::$(cat ./containers/artic-ncov2019/VERSION)"
 
       - name: Build and push
         id: docker_build
