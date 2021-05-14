@@ -6,7 +6,6 @@ guppy_basecalling_config: dna_r9.4.1_450bps_hac.cfg
 guppy_barcodes: "EXP-NBD104 EXP-NBD114"
 guppy_demux_both_ends: true
 guppy_device: auto
-artic_primer_schemes_directory:
 artic_primer_scheme: nCoV-2019/V3
 artic_normalise: 200
 gisaid_clades: "${workflow.projectDir}/data/gisaid_clades.csv"

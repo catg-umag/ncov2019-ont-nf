@@ -1,4 +1,4 @@
-nextflow.enable.dsl=2
+nextflow.enable.dsl = 2
 
 
 workflow LineageAssesment {
@@ -20,7 +20,8 @@ workflow LineageAssesment {
     mergeLineages(
       assignPangolinLineage.out,
       assignGisaidClade.out,
-      assignNextstrainLineage.out)
+      assignNextstrainLineage.out
+    )
 
   emit:
     mergeLineages.out

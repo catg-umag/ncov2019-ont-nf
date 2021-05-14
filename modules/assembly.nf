@@ -7,7 +7,6 @@ workflow Assembly {
     fast5_dir
     fastq_dirs
     sequencing_summary
-    primer_schemes_dir
 
    main:
     if (fastq_dirs == null) {
@@ -25,7 +24,11 @@ workflow Assembly {
       | join(sample_names)
       | filtering
 
-    articConsensus(fast5_dir, sequencing_summary, primer_schemes_dir, filtering.out)
+    articConsensus(
+      fast5_dir,
+      sequencing_summary,
+      filtering.out.flat
+    )
 
     articConsensus.out.consensus
       | map { it[1] }
@@ -95,19 +98,22 @@ process demultiplexing {
 process filtering {
   tag "$sample"
   label 'artic'
-  publishDir "${params.output_directory}/raw_data/", mode: 'copy'
+  publishDir "${params.output_directory}/raw_data/", mode: 'copy', pattern: '*.fastq.gz'
   cpus 1
 
   input:
   tuple val(barcode), path(fastq_dir), val(sample)
 
   output:
-  tuple val(sample), path("${sample}.fastq")
+  tuple val(sample), path("${sample}.fastq"), emit: flat
+  tuple val(sample), path("${sample}.fastq.gz"), emit: compressed
 
   script:
   """
   artic guppyplex --min-length 400 --max-length 700 \
     --directory $fastq_dir --output ${sample}.fastq
+
+  gzip -c ${sample}.fastq > ${sample}.fastq.gz
   """
 }
 
@@ -124,7 +130,6 @@ process articConsensus {
   input:
   path(fast5_dir)
   path(sequencing_summary)
-  path(primer_schemes_dir)
   tuple val(sample), path(fastq_file)
 
   output:
@@ -138,11 +143,12 @@ process articConsensus {
   """
   artic minion --threads ${task.cpus} \
     --normalise ${params.artic_normalise} \
-    --scheme-directory $primer_schemes_dir \
+    --scheme-directory /opt/artic-ncov2019/primer_schemes/ \
     --fast5-directory $fast5_dir \
     --sequencing-summary $sequencing_summary \
     --read-file $fastq_file \
     ${params.artic_primer_scheme} $sample
+
   gunzip ${sample}.pass.vcf.gz -c > ${sample}.pass.vcf
   """
 }
