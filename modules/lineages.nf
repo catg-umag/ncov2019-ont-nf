@@ -9,18 +9,18 @@ workflow LineageAssesment {
 
   main:
     consensus
-      | (assignPangolinLineage & assignNextstrainLineage)
+      | (assignPangolin & assignNextstrain)
     
     vcf
       | map { it[1] }
       | collect
       | set { all_vcfs }
-    assignGisaidClade(all_vcfs, gisaid_clades)
+    assignGisaid(all_vcfs, gisaid_clades)
 
     mergeLineages(
-      assignPangolinLineage.out,
-      assignGisaidClade.out,
-      assignNextstrainLineage.out
+      assignPangolin.out,
+      assignGisaid.out,
+      assignNextstrain.out
     )
 
   emit:
@@ -28,7 +28,7 @@ workflow LineageAssesment {
 }
 
 
-process assignPangolinLineage {
+process assignPangolin {
   label 'pangolin'
   publishDir "${params.output_directory}/lineages", mode: 'copy'
 
@@ -45,7 +45,7 @@ process assignPangolinLineage {
 }
 
 
-process assignGisaidClade {
+process assignGisaid {
   label 'pandas'
   publishDir "${params.output_directory}/lineages", mode: 'copy'
 
@@ -66,7 +66,7 @@ process assignGisaidClade {
 }
 
 
-process assignNextstrainLineage {
+process assignNextstrain {
   label 'nextclade'
   publishDir "${params.output_directory}/lineages", mode: 'copy'
 
