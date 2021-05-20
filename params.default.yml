@@ -6,10 +6,12 @@ run_id:
 guppy_basecalling_config: dna_r9.4.1_450bps_hac.cfg
 guppy_barcodes: "EXP-NBD104 EXP-NBD114"
 guppy_demux_both_ends: true
-guppy_device: auto
+guppy_enable_gpu: true
+guppy_gpu_config: "--device auto --gpu_runners_per_device 4 --chunks_per_runner 1024 --chunk_size 2048"
 artic_primer_scheme: nCoV-2019/V3
 artic_normalise: 200
 gisaid_clades: "${workflow.projectDir}/data/gisaid_clades.csv"
 gisaid_template: "${workflow.projectDir}/data/20210222_EpiCoV_BulkUpload_Template.xlsx"
-publish_minimum_completion: 90
+gisaid_submission_enabled: true
+publish_minimum_completion: 95
 output_directory: results

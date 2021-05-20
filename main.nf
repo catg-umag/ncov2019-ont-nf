@@ -21,7 +21,7 @@ Channel
 
 if (params.fastq_directory != null) {
   Channel
-    .fromPath("${params.fasq_directory}/barcode*", type: 'dir')
+    .fromPath("${params.fastq_directory}/barcode*", type: 'dir')
     .set { fastq_dirs }
 } else {
   fastq_dirs = null
