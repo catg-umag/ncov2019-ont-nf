@@ -33,7 +33,7 @@ jobs:
         with:
           context: ./containers/nextclade/
           push: true
-          tags: catgumag/nextclade:${{steps.getversion.outputs.version}}
+          tags: catgumag/nextclade:${{ steps.getversion.outputs.version }}
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
