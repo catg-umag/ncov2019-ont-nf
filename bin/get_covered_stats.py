@@ -5,30 +5,31 @@ import re
 from Bio import SeqIO
 
 
+GENOME_SIZE = 29903
+
+
 def main():
     args = parse_arguments()
 
     stats = []
-    max_length = 0
     for seq in SeqIO.parse(args.input, "fasta"):
         name = re.sub(r"/ARTIC.*$", "", seq.id)
         n_counts = len(re.findall("N", str(seq.seq)))
-        if len(seq.seq) > max_length:
-            max_length = len(seq.seq)
         stats.append([name, n_counts])
-    
-    stats = sorted(stats, key = lambda x: int(x[0]))
+
+    stats = sorted(stats, key=lambda x: int(x[0]))
 
     with open(args.output, "w") as f:
-        f.write("sample,n_quantity,perc_covered\n")
+        f.write("sample,bases_covered,perc_covered\n")
         for s in stats:
-            covered = round(100 - (s[1] / max_length * 100), 2)
-            f.write(f"{s[0]},{s[1]},{covered}\n")
+            covered = round(100 - (s[1] / GENOME_SIZE * 100), 2)
+            f.write(f"{s[0]},{GENOME_SIZE - s[1]},{covered}\n")
 
 
 def parse_arguments():
     parser = argparse.ArgumentParser(
-        description="Counts how many 'N' are found in each sequecing, and generate stats"
+        description="Collect statistics regarding the completion of the assembly "
+        + "compared to the reference (reference coverage)"
     )
 
     parser.add_argument(

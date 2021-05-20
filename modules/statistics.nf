@@ -3,7 +3,7 @@ nextflow.enable.dsl = 2
 
 workflow GetStatistics {
   take:
-    bamfiles
+    bamfiles  // channel [name, BAM file]
 
   main:
     alignmentStats(bamfiles)
@@ -48,7 +48,7 @@ process fastqc {
   label 'fastqc'
   tag "$sample"
   publishDir "${params.output_directory}/qc/fastqc", mode: 'copy'
-  cpus 2
+  cpus 1
 
   input:
   tuple val(sample), path(bamfile)

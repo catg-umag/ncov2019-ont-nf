@@ -1,6 +1,6 @@
 FROM ubuntu:20.04
 
-COPY VERSION VERSION
+COPY VERSION /root/VERSION
 
 RUN apt update && apt upgrade -y
 RUN apt install -y wget
@@ -21,7 +21,7 @@ ENV PATH=/opt/micromamba/bin/:$PATH
 # install artic
 RUN eval "$(micromamba shell hook -s posix)" && \
     micromamba activate && \
-    micromamba install artic=$(cat VERSION) -c bioconda -c conda-forge
+    micromamba install artic=$(cat /root/VERSION) -c bioconda -c conda-forge
 RUN micromamba clean -aqy
 
 # reference files need to be indexed for the pipeline

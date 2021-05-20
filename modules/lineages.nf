@@ -3,9 +3,9 @@ nextflow.enable.dsl = 2
 
 workflow LineageAssesment {
   take:
-    consensus
-    vcf
-    gisaid_clades
+    consensus       // single FASTA file containing all consensuses
+    vcf             // channel [name, VCF file]
+    gisaid_clades   // single CSV file contaning variations for each GISAID clade
 
   main:
     consensus

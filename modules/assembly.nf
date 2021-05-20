@@ -3,10 +3,10 @@ nextflow.enable.dsl = 2
 
 workflow Assembly {
   take:
-    sample_names
-    fast5_dir
-    fastq_dirs
-    sequencing_summary
+    sample_names        // channel [barcode, sample]
+    fast5_dir           // single directory containing FAST5 files
+    fastq_dirs          // channel [directory] (one for each barcode)
+    sequencing_summary  // single TXT file
 
    main:
     if (fastq_dirs == null) {
@@ -32,7 +32,10 @@ workflow Assembly {
 
     articConsensus.out.consensus
       | map { it[1] }
-      | collectFile(name: "all_consensus.fasta", newLine: true)
+      | collectFile(
+          name: "all_consensus${params.run_suffix}.fasta",
+          storeDir: "${params.output_directory}/summary",
+          newLine: true)
       | collect
       | set { all_consensus }
 

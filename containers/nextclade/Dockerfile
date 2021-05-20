@@ -1,11 +1,11 @@
 FROM ubuntu:20.04
 
-COPY VERSION VERSION
+COPY VERSION /root/VERSION
 
 RUN apt update && apt upgrade -y
 RUN apt install -y wget
 
-RUN wget https://github.com/nextstrain/nextclade/releases/download/$(cat VERSION)/nextclade-Linux-x86_64 \
+RUN wget https://github.com/nextstrain/nextclade/releases/download/$(cat /root/VERSION)/nextclade-Linux-x86_64 \
         -O /usr/local/bin/nextclade
 RUN chmod +x /usr/local/bin/nextclade
 
