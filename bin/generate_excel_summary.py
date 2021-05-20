@@ -43,17 +43,21 @@ def write_samples_sheet(sheet: Worksheet, df_samples: pd.DataFrame, min_coverage
         sheet.append(r)
 
     # apply conditional filling to perc_covered column
+    perc_column = next(
+        x[0].column_letter for x in sheet.columns if x[0].value == "perc_covered"
+    )
     for i, row in enumerate(df_samples.itertuples(), start=2):
         color = "cefbc1" if row.perc_covered > min_coverage else "fbc1c1"
-        sheet[f"H{i}"].fill = PatternFill(start_color=color, fill_type="solid")
+        sheet[f"{perc_column}{i}"].fill = PatternFill(
+            start_color=color, fill_type="solid"
+        )
 
     # improve style
-    column_widths = [12, 12, 12, 10, 10, 12, 14, 14]
-    for col, w in zip(sheet.columns, column_widths):
+    for col in sheet.columns:
         col[0].font = Font(name="Calibri", bold=True)
         col[0].border = Border(bottom=Side(border_style="medium", color="000000"))
         col[0].alignment = Alignment(horizontal="center")
-        sheet.column_dimensions[col[0].column_letter].width = w
+        sheet.column_dimensions[col[0].column_letter].width = 13
 
 
 def write_variants_sheet(sheet: Worksheet, df_variants: pd.DataFrame):

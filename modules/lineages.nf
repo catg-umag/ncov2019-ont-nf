@@ -46,7 +46,7 @@ process assignPangolin {
 
 
 process assignGisaid {
-  label 'pandas'
+  label 'python'
   publishDir "${params.output_directory}/lineages", mode: 'copy'
 
   input:
@@ -92,7 +92,7 @@ process assignNextstrain {
 
 
 process mergeLineages {
-  label 'pandas'
+  label 'python'
 
   input:
   path(pangolin_lineages)
