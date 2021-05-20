@@ -23,6 +23,13 @@ def main():
 
 
 def get_clade(sample_variants: pd.DataFrame, clades: pd.DataFrame) -> str:
+    """
+    Assign clade to a sample directly comparing mutations
+
+    :param sample_variants: sample variants (DataFrame[pos,ref,alt])
+    :param clades: clade variants (Dataframe[clade,pos,ref,alt])
+    :return: return clade name if determined, else "None"
+    """
     # special case: wildtype (should have . as ref in all its "mutations")
     # so, if we don't find any mutation in the same positions, we assume it's wildtype
     wt = clades.query("ref == '.'")
@@ -52,6 +59,9 @@ def get_clade(sample_variants: pd.DataFrame, clades: pd.DataFrame) -> str:
 
 
 def load_vcf(path: str) -> pd.DataFrame:
+    """
+    Read POS, REF and ALT from VCF
+    """
     df = pd.read_csv(
         path, comment="#", sep="\t", usecols=[1, 3, 4], names=["pos", "ref", "alt"]
     )

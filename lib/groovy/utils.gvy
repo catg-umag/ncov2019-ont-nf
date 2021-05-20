@@ -1,7 +1,4 @@
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import org.yaml.snakeyaml.Yaml
-
 
 def addDefaultParamValues(params, defaultsFile) {
   yaml = new Yaml()
@@ -32,11 +29,4 @@ def getParamValue(params, name, defaultValue) {
 
 def throwError(msg) {
   exit 1, "ERROR: $msg"
-}
-
-def getDateStr() {
-  now = LocalDateTime.now()
-  formatter = DateTimeFormatter.ofPattern('yyyyMMdd')
-
-  return now.format(formatter)
 }

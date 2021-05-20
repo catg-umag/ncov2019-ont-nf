@@ -1,0 +1,4 @@
+biopython==1.78
+pandas==1.2.4
+openpyxl==3.0.7
+scipy==1.6.3

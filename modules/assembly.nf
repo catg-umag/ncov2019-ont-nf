@@ -3,10 +3,10 @@ nextflow.enable.dsl = 2
 
 workflow Assembly {
   take:
-    sample_names
-    fast5_dir
-    fastq_dirs
-    sequencing_summary
+    sample_names        // channel [barcode, sample]
+    fast5_dir           // single directory containing FAST5 files
+    fastq_dirs          // channel [directory] (one for each barcode)
+    sequencing_summary  // single TXT file
 
    main:
     if (fastq_dirs == null) {
@@ -32,14 +32,20 @@ workflow Assembly {
 
     articConsensus.out.consensus
       | map { it[1] }
-      | collectFile(name: "all_consensus.fasta", newLine: true)
+      | collectFile(
+          name: "all_consensus${params.run_suffix}.fasta",
+          storeDir: "${params.output_directory}/summary",
+          newLine: true)
       | collect
       | set { all_consensus }
+
+    downloadSnpEffDb()
+    annotateVCFs(articConsensus.out.vcf, downloadSnpEffDb.out)
 
   emit:
     consensus = all_consensus
     bam = articConsensus.out.bam
-    vcf = articConsensus.out.vcf
+    vcf = annotateVCFs.out
 }
 
 
@@ -121,11 +127,8 @@ process filtering {
 process articConsensus {
   tag "$sample"
   label 'artic'
-  publishDir "${outdir}/artic/pipeline/${sample}", mode: 'copy'
-  publishDir "${outdir}/artic/consensus/", mode: 'copy', pattern: '*.consensus.fasta'
-  publishDir "${outdir}/artic/vcf/", mode: 'copy', pattern: '*.pass.vcf'
-  publishDir "${outdir}/artic/bam/", mode: 'copy', pattern: '*.primertrimmed.rg.sorted.bam'
-  cpus 8
+  publishDir "${params.output_directory}/artic/${sample}", mode: 'copy'
+  cpus 4
 
   input:
   path(fast5_dir)
@@ -136,10 +139,9 @@ process articConsensus {
   tuple val(sample), path('*')
   tuple val(sample), path('*.consensus.fasta'), emit: consensus
   tuple val(sample), path('*.primertrimmed.rg.sorted.bam'), emit: bam
-  tuple val(sample), path('*.pass.vcf'), emit: vcf
+  tuple val(sample), path('*.pass.vcf.gz'), emit: vcf
 
   script:
-  outdir = params.output_directory
   """
   artic minion --threads ${task.cpus} \
     --normalise ${params.artic_normalise} \
@@ -148,7 +150,41 @@ process articConsensus {
     --sequencing-summary $sequencing_summary \
     --read-file $fastq_file \
     ${params.artic_primer_scheme} $sample
+  """
+}
 
-  gunzip ${sample}.pass.vcf.gz -c > ${sample}.pass.vcf
+
+process downloadSnpEffDb {
+  label 'snpeff'
+
+  output:
+  path('snpeff_data')
+
+  script:
+  """
+  snpEff download -dataDir \$PWD/snpeff_data NC_045512.2 
+  """
+}
+
+
+process annotateVCFs {
+  tag "$sample"
+  label 'snpeff'
+  publishDir "${params.output_directory}/vcf", mode: 'copy'
+
+  input:
+  tuple val(sample), path(vcf)
+  path('snpeff_data')
+
+  output:
+  tuple val(sample), path("${sample}.anno.vcf")
+
+  script:
+  """
+  zcat $vcf \
+  | sed 's/MN908947.3/NC_045512.2/g' \
+  | snpEff -canon -noLof -no-downstream -no-upstream -noStats -noLog \
+    -nodownload -dataDir \$PWD/snpeff_data NC_045512.2 \
+    > ${sample}.anno.vcf
   """
 }

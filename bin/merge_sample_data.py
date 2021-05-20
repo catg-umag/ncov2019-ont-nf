@@ -8,6 +8,9 @@ def main():
     args = parse_arguments()
 
     df_base = pd.read_csv(args.base)
+    df_base.drop(
+        columns=[x for x in df_base.columns if x.startswith("gisaid_")], inplace=True
+    )
     df_lineage = pd.read_csv(args.lineages)
     df_coverage = pd.read_csv(
         args.coverage, sep="\t", usecols=["#rname", "meandepth"]
@@ -15,13 +18,10 @@ def main():
     df_refcoverage = pd.read_csv(args.ref_coverage)
 
     df = (
-        (
-            df_base.merge(df_lineage, how="outer")
-            .merge(df_coverage, how="outer")
-            .merge(df_refcoverage, how="outer")
-        )
-        .sort_values("barcode")
-    )
+        df_base.merge(df_lineage, how="outer")
+        .merge(df_coverage, how="outer")
+        .merge(df_refcoverage, how="outer")
+    ).sort_values("barcode")
 
     df.to_csv(args.output, index=False)
 
