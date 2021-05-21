@@ -1,4 +1,4 @@
-¿Prefieres el español? Puedes leer esto en español [aquí](README.es.md).
+¿Prefieres el español? Puedes encontrar el README en español [aquí](README.es.md).
 
 # nCoV-2019 Analysis Pipeline (Oxford Nanopore Sequencing)
 
