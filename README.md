@@ -2,6 +2,8 @@
 
 # nCoV-2019 Analysis Pipeline (Oxford Nanopore Sequencing)
 
+[![DOI](https://zenodo.org/badge/367064011.svg)](https://zenodo.org/badge/latestdoi/367064011)
+
 Nextflow pipeline for assembly and underlying analysis of SARS-CoV-2 genomes.
 Uses ARTIC's bioinformatic protocol, so using its protocol for the sequencing step is required [more info](https://artic.network/ncov-2019).
 
@@ -79,7 +81,7 @@ sample,barcode,city,gisaid_covv_virus_name,gisaid_covv_collection_date,gisaid_co
 2105001,barcode05,Punta Arenas,hCoV-19/Chile/CADIUMAG-55/2021,2021-05-20,South America / Chile / Magallanes / Punta Arenas
 ```
 
-### Pipeline Parameters
+### Pipeline parameters
 
 The pipeline has various parameters to help to suit your needs. These are:
 
@@ -158,9 +160,9 @@ Inside the results directory, you will find the following:
   - `summary.xlsx`: Excel file with the information of `sample_summary.csv` as first sheet and a summary of the variant presence on the samples in the second one.
 - `gisaid_submission`: if you enabled the submission preparation you will find here a FASTA file filtered by coverage and with sequences renamed if you provided the corresponding name, and also the upload template filled with the available information (you could still need to fill some values manually)
 
-## How to cite
+## How to Cite
 
-If this work was useful to you, you can cite this article:
+If this work was useful to you, you can cite using the Zenodo link or this article:
 
 > González-Puelma, J.; Aldridge, J.; Montes de Oca, M.; Pinto, M.; Uribe-Paredes, R.; Fernández-Goycoolea, J.; Alvarez-Saravia, D.; Álvarez, H.; Encina, G.; Weitzel, T.; Muñoz, R.; Olivera-Nappa, Á.; Pantano, S.; Navarrete, M.A. Mutation in a SARS-CoV-2 Haplotype from Sub-Antarctic Chile Reveals New Insights into the Spike’s Dynamics. Viruses 2021, 13, 883. https://doi.org/10.3390/v13050883
 

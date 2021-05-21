@@ -1,5 +1,7 @@
 # Pipeline para Análisis de nCoV-2019 con Oxford Nanopore
 
+[![DOI](https://zenodo.org/badge/367064011.svg)](https://zenodo.org/badge/latestdoi/367064011)
+
 Pipeline en Nextflow para el ensamblaje y posterior análisis de genomas de SARS-CoV-2.
 Utiliza el protocolo bioinformático de ARTIC, por lo que es necesario haber utilizado el protocolo de ARTIC para la secuenciación ([más información](https://artic.network/ncov-2019)).
 
@@ -15,7 +17,7 @@ Actualmente incluye:
 - Generación de resumen final en formato Excel incluyendo la información más relevante obtenida en la ejecución del pipeline
 - Preparación de planilla y secuencias para ser subidas a GISAID
 
-## Inicio rápido
+## Inicio Rápido
 
 1. Instalar Nextflow, Singularity (o Docker) y Guppy (si se desea hacer basecalling)
 2. Crear un archivo CSV con las columnas `barcode` y `sample`, que tenga los barcodes de Nanopore (barcode01, barcode02, etc) y un nombre de muestra para cada uno de ellos. Si se planea la carga en GISAID, es recomendable tener una tercera columna: `gisaid_covv_virus_name`, que tenga los nombres que se utilizarán para subir las muestras a GISAID (debe tener el formato `hCoV-19/<Pais>/<ID>/<Año>`).
@@ -159,13 +161,13 @@ Dentro del directorio de resultados (`results/` por defecto), se encontrará lo 
   - `summary.xlsx`: archivo Excel con la información de las muestras en la primera hoja, y un resúmen de presencia de las diferentes variantes en las muestras en la segunda (las cuales son reordenadas dependiendo de su similitud considerando las variantes que poseen).
 - `gisaid_submission`: si fue habilitada la opción de preparar la carga a GISAID, en este directory se encontrará un archivo FASTA filtrado por el criterio de cobertura y con las secuencias renombrados si se indicaron los nombres, además de la planilla Excel llenado con la información disponible (podría aún requerir llenar campos manualmente)
 
-## Cómo citar
+## Cómo Citar
 
-Si este trabajo fue de utilidad, puede citar este trabajo a través de la siguiente publicación:
+Si este trabajo fue de utilidad, puede citarlo a través del link de Zenodo o la siguiente publicación:
 
 > González-Puelma, J.; Aldridge, J.; Montes de Oca, M.; Pinto, M.; Uribe-Paredes, R.; Fernández-Goycoolea, J.; Alvarez-Saravia, D.; Álvarez, H.; Encina, G.; Weitzel, T.; Muñoz, R.; Olivera-Nappa, Á.; Pantano, S.; Navarrete, M.A. Mutation in a SARS-CoV-2 Haplotype from Sub-Antarctic Chile Reveals New Insights into the Spike’s Dynamics. Viruses 2021, 13, 883. https://doi.org/10.3390/v13050883
 
-## Software utilizado
+## Software Utilizado
 
 - ARTIC y todas sus dependencias
 - Python y sus librerías: biopython, openpyxl, pandas, scipy
