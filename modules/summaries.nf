@@ -27,12 +27,14 @@ workflow GenerateSummaries {
 
     generateExcelSummary(mergeSampleData.out, gatherVcfInfo.out)
 
-    prepareSubmission(
-      epicov_template,
-      samples_data,
-      mergeSampleData.out,
-      consensus
-    )
+    if (params.gisaid_submission_enabled) {
+      prepareSubmission(
+        epicov_template,
+        samples_data,
+        mergeSampleData.out,
+        consensus
+      )
+    }
 }
 
 

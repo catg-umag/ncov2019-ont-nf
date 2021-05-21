@@ -62,17 +62,15 @@ process basecalling {
   path('basecalled/sequencing_summary.txt'), emit: sequencing_summary
 
   script:
+  gpu_opts = params.guppy_enable_gpu ? params.guppy_gpu_config : ''
   """
   guppy_basecaller \
     --input_path ${fast5_dir} \
     --save_path basecalled \
     --config ${params.guppy_basecalling_config} \
     --recursive \
-    --device ${params.guppy_device} \
     --num_callers ${task.cpus} \
-    --gpu_runners_per_device 4 \
-    --chunks_per_runner 1024 \
-    --chunk_size 2048
+    $gpu_opts
   """
 }
 

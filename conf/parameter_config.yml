@@ -1,0 +1,45 @@
+sample_data:
+  required: true
+  validate: file
+fast5_directory:
+  required: true
+  validate: directory
+fastq_directory:
+  required: false
+  pathtype: directory
+sequencing_summary:
+  required_if: fastq_directory
+  validate: file
+run_id:
+  required: false
+guppy_basecalling_config:
+  required: false
+guppy_barcodes:
+  required: false
+guppy_demux_both_ends:
+  required: false
+  validate: boolean
+guppy_enable_gpu:
+  required: false
+  validate: boolean
+guppy_gpu_config:
+  required: false
+artic_primers_scheme:
+  required: false
+artic_normalise:
+  validate: integer
+gisaid_clades:
+  required: false
+  validate: file
+gisaid_template:
+  required: false
+  validate: file
+gisaid_submission_enabled:
+  required: false
+  validate: boolean
+publish_minimum_completion:
+  required: false
+  validate: integer
+output_directory:
+  required: false
+  pathtype: directory

@@ -1,9 +1,10 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl = 2
 
-include { addDefaultParamValues } from './lib/groovy/utils.gvy'
+include { addDefaultParamValues; validateParameters } from './lib/groovy/utils.gvy'
 
 addDefaultParamValues(params, "${workflow.projectDir}/params.default.yml")
+validateParameters(params, "${workflow.projectDir}/conf/parameter_config.yml")
 params.run_suffix = params.run_id != null ? "_${params.run_id}" : ''
 
 // load subworkflows after modifying parameters
@@ -21,7 +22,7 @@ Channel
 
 if (params.fastq_directory != null) {
   Channel
-    .fromPath("${params.fasq_directory}/barcode*", type: 'dir')
+    .fromPath("${params.fastq_directory}/barcode*", type: 'dir')
     .set { fastq_dirs }
 } else {
   fastq_dirs = null
