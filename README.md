@@ -27,14 +27,14 @@ Currently includes:
    With basecalling, singularity:
 
    ```
-   nextflow run catg-umag/ncov2019-ont-nf -r v1.0 -profile singularity \
+   nextflow run catg-umag/ncov2019-ont-nf -r v1.1 -profile singularity \
        --sample_data <csv_file> --fast5_directory <fast5_dir>
    ```
 
    No basecalling, docker
 
    ```
-   nextflow run catg-umag/ncov2019-ont-nf -r v1.0 -profile docker \
+   nextflow run catg-umag/ncov2019-ont-nf -r v1.1 -profile docker \
        --sample_data <csv_file> --fast5_directory <fast5_dir> \
        --fastq_directory <fastq_dir> --sequencing_summary <txt_file>
    ```
@@ -113,7 +113,7 @@ You can specify these by command line options (for example `--run_id 20210501A`)
 The pipeline can be downloaded directly (with `git clone` for example), and you can specify to Nextflow the path, but you can also indicate just `catg-umag/ncov2019-ont-nf` and a version with the `-r` option, and that will download the pipeline automatically. For example:
 
 ```
-nextflow run catg-umag/ncov2019-ont-nf -r v1.0 -profile singularity ...
+nextflow run catg-umag/ncov2019-ont-nf -r v1.1 -profile singularity ...
 ```
 
 Is mandatory to use either the `singularity` or `docker` profiles, because if you don't the pipeline will expect to have all the necessary tools installed and most probably won't work.
