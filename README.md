@@ -41,7 +41,7 @@ Currently includes:
 
 4. When the execution finishes, you will find your results in the `results/` directory.
 
-# Requirements
+## Requirements
 
 - [Nextflow](https://www.nextflow.io/) (>= 20.07)
 - [Singularity](https://sylabs.io/guides/3.7/admin-guide/) or [Docker](https://www.docker.com/get-started)
