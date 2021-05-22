@@ -85,25 +85,25 @@ sample,barcode,city,gisaid_covv_virus_name,gisaid_covv_collection_date,gisaid_co
 
 Además de la posibilidad de especificar los inputs, es posible controlar algunos aspectos del pipeline a través de parámetros. El listado de parámetros disponibles es el siguiente:
 
-| Parámetro                  | Requerido | Valor Por defecto            | Descripción                                                                                                                                                             |
-| -------------------------- | --------- | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| sample_data               | si        | ---                          | Archivo delimitado por comas con el detalle de las muestras.                                                                                                            |
-| fast5_directory            | si        | ---                          | Ruta al directorio FAST5 obtenido en la secuenciación. En caso no realizar basecalling, indicar el sub-directorio `pass`.                                               |
-| fastq_directory            | no        | ---                          | Ruta al directorio FASTQ obtenido en la secuenciación en caso de que se haya realizado basecalling y no se desee realizar basecalling.                                  |
-| sequencing_summary         | no        | ---                          | Resumen obtenido en el proceso de basecalling. Requerido si se proveen datos en FASTQ.                                                                                  |
-| run_id                     | no        | ""                           | ID opcional para la secuenciación que se utilizará como sufijo en los nombres de archivos de los resúmenes y recopilaciones de datos.                                   |
-| guppy_basecalling_config   | no        | dna_r9.4.1_450bps_hac.cfg    | Configuración a utilizar para realizar el basecalling con guppy. Más información sobre las configuraciones disponibles en el manual de Guppy.                           |
-| guppy_barcodes             | no        | "EXP-NBD104 EXP-NBD114"      | Kit(s) utilizado(s) en la secuenciación para la multiplexación.                                                                                                         |
-| guppy_demu_both_ends       | no        | true                         | Valor que indica si se debe exigir la presencia de ambos barcodes (5' y 3') al momento de hacer demultiplexing.                                                         |
-| guppy_enable_gpu           | no        | true                         | Utilizar GPU en el proceso de basecalling.                                                                                                                              |
-| guppy_gpu_config           | no        | "--device auto --gpu..."     | Configuración a utilizar para gestionar los recursos de la GPU. El valor por defecto funciona bien en GPUS Tesla V100, pero para otros modelos podría requerir cambios. |
-| artic_primers_scheme       | no        | nCoV-2019/V3                 | Esquema de primers de ARTIC utilizado al construir la librería.                                                                                                         |
-| artic_normalise            | no        | 500                          | Valor para establecer un valor de cobertura objetivo en el pipeline de ARTIC.                                                                                           |
-| gisaid_clades              | no        | data/gisaid_clades.csv       | Ruta al archivo que contiene la descripción de los clados de GISAID (disponible en repositorio).                                                                        |
-| gisaid_template            | no        | data/20210222_EpiCoV....xlsx | Ruta al template utilizado para subir muestras a GISAID (disponible en repositorio).                                                                                    |
-| gisaid_submission_enabled  | no        | true                         | Habilitar (o no) la generación de los archivos preparados para cargar datos a GISAID.                                                                                   |
-| publish_minimum_completion | no        | 95                           | Valor entre 0 - 100 que indica el porcentaje de bases cubiertas respecto al genoma que se requerirá para la inclusión de estas muestras en la carga de GISAID.          |
-| output_directory           | no        | results                      | Directorio en el cual se almacenaran los resultados.                                                                                                                    |
+| Parámetro                      | Requerido | Valor Por defecto            | Descripción                                                                                                                                                    |
+| ------------------------------ | --------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| sample_data                    | si        | ---                          | Archivo delimitado por comas con el detalle de las muestras.                                                                                                   |
+| fast5_directory                | si        | ---                          | Ruta al directorio FAST5 obtenido en la secuenciación. En caso no realizar basecalling, indicar el sub-directorio `pass`.                                      |
+| fastq_directory                | no        | ---                          | Ruta al directorio FASTQ obtenido en la secuenciación en caso de que se haya realizado basecalling y no se desee realizar basecalling.                         |
+| sequencing_summary             | no        | ---                          | Resumen obtenido en el proceso de basecalling. Requerido si se proveen datos en FASTQ.                                                                         |
+| run_id                         | no        | ""                           | ID opcional para la secuenciación que se utilizará como sufijo en los nombres de archivos de los resúmenes y recopilaciones de datos.                          |
+| guppy_basecalling_config       | no        | dna_r9.4.1_450bps_hac.cfg    | Configuración a utilizar para realizar el basecalling con guppy. Más información sobre las configuraciones disponibles en el manual de Guppy.                  |
+| guppy_barcodes                 | no        | "EXP-NBD104 EXP-NBD114"      | Kit(s) utilizado(s) en la secuenciación para la multiplexación.                                                                                                |
+| guppy_demux_both_ends          | no        | true                         | Valor que indica si se debe exigir la presencia de ambos barcodes (5' y 3') al momento de hacer demultiplexing.                                                |
+| guppy_cpus                     | no        | 16                           | Cantidad de CPUs a utilizar en los procesos asociados a Guppy.                                                                                                 |
+| guppy_basecalling_extra_config | no        | "--device auto"              | Opciones extras para Guppy al hacer basecalling (por ejemplo, parámetros asociados a la configuración de la GPU).                                              |
+| artic_primers_scheme           | no        | nCoV-2019/V3                 | Esquema de primers de ARTIC utilizado al construir la librería.                                                                                                |
+| artic_normalise                | no        | 500                          | Valor para establecer un valor de cobertura objetivo en el pipeline de ARTIC.                                                                                  |
+| gisaid_clades                  | no        | data/gisaid_clades.csv       | Ruta al archivo que contiene la descripción de los clados de GISAID (disponible en repositorio).                                                               |
+| gisaid_template                | no        | data/20210222_EpiCoV....xlsx | Ruta al template utilizado para subir muestras a GISAID (disponible en repositorio).                                                                           |
+| gisaid_submission_enabled      | no        | true                         | Habilitar (o no) la generación de los archivos preparados para cargar datos a GISAID.                                                                          |
+| publish_minimum_completion     | no        | 95                           | Valor entre 0 - 100 que indica el porcentaje de bases cubiertas respecto al genoma que se requerirá para la inclusión de estas muestras en la carga de GISAID. |
+| output_directory               | no        | results                      | Directorio en el cual se almacenaran los resultados.                                                                                                           |
 
 El listado y lo valores por defecto se encuentran en el archivo `params.default.yml`.
 Los parámetros pueden ser indicados a través de la línea de comandos (por ejemplo `--run_id 20210501A`), pero también pueden pasarse a través de un archivo en formato YAML, se puede utilizar como plantilla el archivo `params.default.yml` (no mover o editar el archivo en sí, ya que es necesario).
@@ -142,8 +142,7 @@ gisaid_submission_enabled: false
 nextflow run ncov2019-ont-nf/ -profile singularity -params-file params.yml
 ```
 
-El pipeline por defecto se ejecutará de manera local, pero en caso de querer ejecutarlo en una cúster de cómputo que utilize Slurm,
-puede especificarse mediante el perfil `slurm`, que de usarse junto al de singularity (lo más probable), quedará así: `-profile slurm,singularity`.
+El pipeline por defecto se ejecutará de manera local, pero en caso de querer ejecutarlo en un clúster de cómputo que utilice Slurm, puede especificarse mediante el perfil `slurm`. Y no olvidar también el perfil de singularity (este debe estar instalado en el clúster): `-profile slurm,singularity`.
 
 ## Resultados
 
@@ -163,9 +162,11 @@ Dentro del directorio de resultados (`results/` por defecto), se encontrará lo 
 
 ## Cómo Citar
 
-Si este trabajo fue de utilidad, puede citarlo a través del link de Zenodo o la siguiente publicación:
+Si este trabajo te fue de utilidad, puedes citarlo a través del siguiente artículo:
 
 > González-Puelma, J.; Aldridge, J.; Montes de Oca, M.; Pinto, M.; Uribe-Paredes, R.; Fernández-Goycoolea, J.; Alvarez-Saravia, D.; Álvarez, H.; Encina, G.; Weitzel, T.; Muñoz, R.; Olivera-Nappa, Á.; Pantano, S.; Navarrete, M.A. Mutation in a SARS-CoV-2 Haplotype from Sub-Antarctic Chile Reveals New Insights into the Spike’s Dynamics. Viruses 2021, 13, 883. https://doi.org/10.3390/v13050883
+
+O también puedes usar la [referencia de Zenodo](https://zenodo.org/badge/latestdoi/367064011).
 
 ## Software Utilizado
 
