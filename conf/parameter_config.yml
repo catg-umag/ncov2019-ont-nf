@@ -19,10 +19,10 @@ guppy_barcodes:
 guppy_demux_both_ends:
   required: false
   validate: boolean
-guppy_enable_gpu:
+guppy_cpus:
   required: false
-  validate: boolean
-guppy_gpu_config:
+  validate: integer
+guppy_basecalling_extra_config:
   required: false
 artic_primers_scheme:
   required: false

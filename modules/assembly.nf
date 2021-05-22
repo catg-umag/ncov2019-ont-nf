@@ -52,7 +52,7 @@ workflow Assembly {
 process basecalling {
   label 'guppy'
   label 'gpu'
-  cpus 16
+  cpus params.guppy_cpus
   
   input:
   path(fast5_dir)
@@ -62,7 +62,6 @@ process basecalling {
   path('basecalled/sequencing_summary.txt'), emit: sequencing_summary
 
   script:
-  gpu_opts = params.guppy_enable_gpu ? params.guppy_gpu_config : ''
   """
   guppy_basecaller \
     --input_path ${fast5_dir} \
@@ -70,14 +69,14 @@ process basecalling {
     --config ${params.guppy_basecalling_config} \
     --recursive \
     --num_callers ${task.cpus} \
-    $gpu_opts
+    ${params.guppy_basecalling_extra_config}
   """
 }
 
 
 process demultiplexing {
   label 'guppy'
-  cpus 16
+  cpus params.guppy_cpus
 
   input:
   path(fastq_dir)
@@ -127,6 +126,7 @@ process articConsensus {
   label 'artic'
   publishDir "${params.output_directory}/artic/${sample}", mode: 'copy'
   cpus 4
+  memory 6.GB
 
   input:
   path(fast5_dir)
