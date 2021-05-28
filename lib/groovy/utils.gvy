@@ -1,5 +1,9 @@
 import org.yaml.snakeyaml.Yaml
 
+/*
+ * Add default parameter values (a mapping) if they are not defined,
+ * reading them from a YAML file
+ */
 def addDefaultParamValues(params, defaultsFile) {
   yaml = new Yaml()
   defaultValues = yaml.load(file(defaultsFile))
@@ -9,6 +13,10 @@ def addDefaultParamValues(params, defaultsFile) {
   }
 }
 
+/*
+ * Check if the parameter values are valid (mandatory, conditional and type),
+ * reading the validation rules from a YAML file
+ */
 def validateParameters(params, paramConfigFile) {
   yaml = new Yaml()
   paramConfig = yaml.load(file(paramConfigFile))
@@ -31,7 +39,7 @@ def validateParameters(params, paramConfigFile) {
     // check type
     if (!isEmpty(params, name) && conf.containsKey('validate')) {
       valid = true
-      switch(conf.validate) {
+      switch (conf.validate) {
         case 'file':
           f = file(params[name])
           valid = f.exists() && f.isFile()
@@ -41,10 +49,10 @@ def validateParameters(params, paramConfigFile) {
           valid = d.exists() && d.isDirectory()
           break
         case 'boolean':
-          valid = (params[name] instanceof Boolean)
+          valid = (params[name].getClass() == Boolean)
           break
         case 'integer':
-          valid = (params[name] instanceof Integer)
+          valid = (params[name].getClass() == Integer)
           break
       }
 
@@ -55,15 +63,18 @@ def validateParameters(params, paramConfigFile) {
   }
 }
 
-
+/*
+ * Evaluate workflow instrospection variables (workflow.*) inside a string
+ */
 def evaluateWorkflowVars(value) {
   matches = (value =~ /\$\{workflow\.[^}]*\}/).findAll()
-  matches.each {
-    name = (it =~ /(?<=\{workflow\.).*(?=\})/).findAll()[0]
-    value = value.replace(it, workflow[name].toString())
+  evaluated = value
+  matches.each { m ->
+    name = (m =~ /(?<=\{workflow\.).*(?=\})/).findAll()[0]
+    evaluated = evaluated.replace(m, workflow[name].toString())
   }
 
-  return value
+  return evaluated
 }
 
 def isEmpty(params, name) {

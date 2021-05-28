@@ -9,9 +9,9 @@ workflow GetStatistics {
     alignmentStats(bamfiles)
 
     bamfiles
-      | fastqc
+      | fastQC
       | collect
-      | multiqc
+      | multiQC
 
     alignmentStats.out.coverage
       | collectFile(keepHeader: true, skip: 1) {
@@ -44,7 +44,7 @@ process alignmentStats {
 }
 
 
-process fastqc {
+process fastQC {
   label 'fastqc'
   tag "$sample"
   publishDir "${params.output_directory}/qc/fastqc", mode: 'copy'
@@ -54,7 +54,7 @@ process fastqc {
   tuple val(sample), path(bamfile)
 
   output:
-  path "fastqc_${sample}"
+  path("fastqc_${sample}")
 
   script:
   """
@@ -64,12 +64,12 @@ process fastqc {
 }
 
 
-process multiqc {
+process multiQC {
   label 'multiqc'
   publishDir "${params.output_directory}/qc/multiqc", mode: 'copy'
   
   input:
-  path fastqc_reports
+  path(fastqc_reports)
 
   output:
   tuple path('multiqc_data'), path('multiqc_report.html')

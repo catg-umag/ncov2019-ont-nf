@@ -19,7 +19,7 @@ def main():
     # write output
     with open(args.output, "w") as f:
         f.write("sample,clade\n")
-        f.write("\n".join(','.join(x) for x in clade_assignments.items()))
+        f.write("\n".join(",".join(x) for x in clade_assignments.items()))
 
 
 def get_clade(sample_variants: pd.DataFrame, clades: pd.DataFrame) -> str:

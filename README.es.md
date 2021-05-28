@@ -1,11 +1,9 @@
 # Pipeline para Análisis de nCoV-2019 con Oxford Nanopore
 
-[![DOI](https://zenodo.org/badge/367064011.svg)](https://zenodo.org/badge/latestdoi/367064011)
-
 Pipeline en Nextflow para el ensamblaje y posterior análisis de genomas de SARS-CoV-2.
 Utiliza el protocolo bioinformático de ARTIC, por lo que es necesario haber utilizado el protocolo de ARTIC para la secuenciación ([más información](https://artic.network/ncov-2019)).
 
-Creado para sistematizar el análisis bioinformático asociado a la vigilancia genómica realizada en el Centro Asistencial Docente y de Investigación de la Universidad de Magallanes. Más información sobre nosotros en [catg.cl](https://catg.cl).
+Desarrollado para sistematizar el análisis bioinformático asociado a la vigilancia genómica realizada en el Centro Asistencial Docente y de Investigación de la Universidad de Magallanes. Más información sobre nosotros en [catg.cl](https://catg.cl).
 
 Actualmente incluye:
 
@@ -148,7 +146,7 @@ El pipeline por defecto se ejecutará de manera local, pero en caso de querer ej
 
 Dentro del directorio de resultados (`results/` por defecto), se encontrará lo siguiente:
 
-- `raw_data`: archivos FASTQ para cada muestra, generado después de los procesos de basecalling, demultiplexing y filtro de largo
+- `raw_data/`: archivos FASTQ para cada muestra, generado después de los procesos de basecalling, demultiplexing y filtro de largo
 - `artic/`: resultados de la ejecución del pipeline de ARTIC para cada una de las muestras
 - `qc/`: métricas de calidad y cobertura del genoma para cada una de las muestras
 - `vcf/`: archivos VCF (variaciones en el genoma) para cada una de las muestras, anotadas con SnpEff
@@ -158,15 +156,13 @@ Dentro del directorio de resultados (`results/` por defecto), se encontrará lo 
   - `sample_summary.csv`: archivo CSV con la información incluída en el archivo de entrada, linajes y métricas de cobertura
   - `variants_list.csv`: archivo CSV con las variantes para todas las muestras con su información esencial
   - `summary.xlsx`: archivo Excel con la información de las muestras en la primera hoja, y un resúmen de presencia de las diferentes variantes en las muestras en la segunda (las cuales son reordenadas dependiendo de su similitud considerando las variantes que poseen).
-- `gisaid_submission`: si fue habilitada la opción de preparar la carga a GISAID, en este directory se encontrará un archivo FASTA filtrado por el criterio de cobertura y con las secuencias renombrados si se indicaron los nombres, además de la planilla Excel llenado con la información disponible (podría aún requerir llenar campos manualmente)
+- `gisaid_submission/`: si fue habilitada la opción de preparar la carga a GISAID, en este directory se encontrará un archivo FASTA filtrado por el criterio de cobertura y con las secuencias renombrados si se indicaron los nombres, además de la planilla Excel llenado con la información disponible (podría aún requerir llenar campos manualmente)
 
 ## Cómo Citar
 
 Si este trabajo te fue de utilidad, puedes citarlo a través del siguiente artículo:
 
 > González-Puelma, J.; Aldridge, J.; Montes de Oca, M.; Pinto, M.; Uribe-Paredes, R.; Fernández-Goycoolea, J.; Alvarez-Saravia, D.; Álvarez, H.; Encina, G.; Weitzel, T.; Muñoz, R.; Olivera-Nappa, Á.; Pantano, S.; Navarrete, M.A. Mutation in a SARS-CoV-2 Haplotype from Sub-Antarctic Chile Reveals New Insights into the Spike’s Dynamics. Viruses 2021, 13, 883. https://doi.org/10.3390/v13050883
-
-O también puedes usar la [referencia de Zenodo](https://zenodo.org/badge/latestdoi/367064011).
 
 ## Software Utilizado
 

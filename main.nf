@@ -3,6 +3,7 @@ nextflow.enable.dsl = 2
 
 include { addDefaultParamValues; validateParameters } from './lib/groovy/utils.gvy'
 
+// pre-process parameters (defaults and validations)
 addDefaultParamValues(params, "${workflow.projectDir}/params.default.yml")
 validateParameters(params, "${workflow.projectDir}/conf/parameter_config.yml")
 params.run_suffix = params.run_id != null ? "_${params.run_id}" : ''
@@ -13,20 +14,16 @@ include { GetStatistics } from './modules/statistics.nf'
 include { LineageAssesment } from './modules/lineages.nf'
 include { GenerateSummaries } from './modules/summaries.nf'
 
-
+// transforms parameters in channels and variables
 Channel
   .fromPath(params.sample_data)
   .splitCsv(header: true)
   .map { row -> [row.barcode, row.sample] }
   .set { sample_names }
 
-if (params.fastq_directory != null) {
-  Channel
-    .fromPath("${params.fastq_directory}/barcode*", type: 'dir')
-    .set { fastq_dirs }
-} else {
-  fastq_dirs = null
-}
+fastq_dirs = params.fastq_directory != null
+  ? Channel.fromPath("${params.fastq_directory}/barcode*", type: 'dir')
+  : null
 
 sequencing_summary = params.sequencing_summary != null
   ? file(params.sequencing_summary)
