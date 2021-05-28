@@ -6,7 +6,7 @@ from typing import Dict
 
 from Bio import SeqIO
 from openpyxl import load_workbook
-# from openpyxl.worksheet.worksheet import Worksheet
+from openpyxl.worksheet.worksheet import Worksheet
 
 
 def main():
@@ -25,7 +25,7 @@ def main():
     wb.save(filename=args.output)
 
 
-def fill_sheet(sheet, sample_data: Dict[str, Dict[str, str]]):
+def fill_sheet(sheet: Worksheet, sample_data: Dict[str, Dict[str, str]]):
     # delete example row
     sheet.delete_rows(3)
 
@@ -33,7 +33,7 @@ def fill_sheet(sheet, sample_data: Dict[str, Dict[str, str]]):
     columns = {col[0].value: col[0].column_letter for col in sheet.columns}
 
     if "covv_virus_name" in sample_data[list(sample_data.keys())[0]]:
-        data = sorted(sample_data.values(), key = lambda x: x["covv_virus_name"])
+        data = sorted(sample_data.values(), key=lambda x: x["covv_virus_name"])
     else:
         data = [v for k, v in sorted(sample_data.items(), key=lambda x: x[0])]
 
@@ -152,7 +152,11 @@ def parse_arguments():
         help="required reference coverage (as percentage) to call a valid assembly",
     )
     parser.add_argument(
-        "--output-excel", "-o", required=True, dest="output", help="Output filled sheet (.xlsx)"
+        "--output-excel",
+        "-o",
+        required=True,
+        dest="output",
+        help="Output filled sheet (.xlsx)",
     )
     parser.add_argument(
         "--output-sequences",

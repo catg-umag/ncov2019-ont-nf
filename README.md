@@ -2,12 +2,10 @@
 
 # nCoV-2019 Analysis Pipeline (Oxford Nanopore)
 
-[![DOI](https://zenodo.org/badge/367064011.svg)](https://zenodo.org/badge/latestdoi/367064011)
-
 Nextflow pipeline for assembly and underlying analysis of SARS-CoV-2 genomes.
 Uses the ARTIC bioinformatic protocol, so using their sequencing protocol is required ([more info](https://artic.network/ncov-2019)).
 
-Created to automate the bioinformatic analysis associated to the virus genomic surveillance initiative pushed by the chilean government and executed by various teams in the country, like us at the University of Magallanes, in the city of Punta Arenas.
+Developed to automate the bioinformatic analysis associated to the virus genomic surveillance initiative pushed by the chilean government and executed by various teams in the country, like us at the University of Magallanes, in the city of Punta Arenas. More information about us in [catg.cl](https://catg.cl) (link in spanish).
 
 Currently includes:
 
@@ -16,7 +14,7 @@ Currently includes:
 - Variant annotation using [SnpEff](https://pcingola.github.io/SnpEff/)
 - Identification of clades/lineages of GISAID, Pangolin and Nexstrain
 - Quality metrics and statistics (qc, coverage)
-- Generating of final summary in Excel format containing relevant information obtained by the pipeline
+- Generation of final summary in Excel format containing relevant information obtained by the pipeline
 - Inicial preparation for GISAID submission
 
 ## Quick Start
@@ -148,7 +146,7 @@ By default the pipeline will execute locally, but if you are using a Slurm Clust
 
 Inside the results directory, you will find the following:
 
-- `raw_data`: FASTQ files for each sample, generated after basecalling+demultiplexing and length filter
+- `raw_data/`: FASTQ files for each sample, generated after basecalling+demultiplexing and length filter
 - `artic/`: results of the ARTIC pipeline execution for each of the samples
 - `qc/`: quality and coverage metrics for each of the samples
 - `vcf/`: VCF files annotated by SnpEff
@@ -158,15 +156,13 @@ Inside the results directory, you will find the following:
   - `sample_summary.csv`: CSV file with the provided info for each sample and also lineages and coverage stats
   - `variants_list.csv`: CSV with the variants for all the samples with their relevant info
   - `summary.xlsx`: Excel file with the information of `sample_summary.csv` as first sheet and a summary of the variant presence on the samples in the second one.
-- `gisaid_submission`: if you enabled the submission preparation you will find here a FASTA file filtered by coverage and with sequences renamed if you provided the corresponding name, and also the upload template filled with the available information (you could still need to fill some values manually)
+- `gisaid_submission/`: if you enabled the submission preparation you will find here a FASTA file filtered by coverage and with sequences renamed if you provided the corresponding name, and also the upload template filled with the available information (you could still need to fill some values manually)
 
 ## How to Cite
 
 If this work was useful to you, you can cite this article:
 
 > González-Puelma, J.; Aldridge, J.; Montes de Oca, M.; Pinto, M.; Uribe-Paredes, R.; Fernández-Goycoolea, J.; Alvarez-Saravia, D.; Álvarez, H.; Encina, G.; Weitzel, T.; Muñoz, R.; Olivera-Nappa, Á.; Pantano, S.; Navarrete, M.A. Mutation in a SARS-CoV-2 Haplotype from Sub-Antarctic Chile Reveals New Insights into the Spike’s Dynamics. Viruses 2021, 13, 883. https://doi.org/10.3390/v13050883
-
-Or you can also use the [Zenodo reference](https://zenodo.org/badge/latestdoi/367064011).
 
 ## Acknowledgements
 

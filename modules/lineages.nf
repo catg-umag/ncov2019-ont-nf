@@ -74,7 +74,7 @@ process assignNextstrain {
   path(consensus)
 
   output:
-  path("nextstrain_lineages.csv")
+  path('nextstrain_lineages.csv')
 
   script:
   data_dir = '/opt/nextclade_data/sars-cov-2'

@@ -64,7 +64,7 @@ process basecalling {
   script:
   """
   guppy_basecaller \
-    --input_path ${fast5_dir} \
+    --input_path $fast5_dir \
     --save_path basecalled \
     --config ${params.guppy_basecalling_config} \
     --recursive \

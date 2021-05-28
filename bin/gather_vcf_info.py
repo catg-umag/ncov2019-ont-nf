@@ -34,7 +34,7 @@ def process_vcf_file(filename: str) -> List[List[str]]:
                 variants.append([name] + process_vcf_row(row, ann_fields))
 
     return variants
-    
+
 
 def process_vcf_row(row: str, ann_fields: List[str]) -> List[str]:
     """
