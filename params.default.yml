@@ -11,7 +11,6 @@ guppy_cpus: 16
 guppy_basecalling_extra_config: "--device auto"
 artic_primer_scheme: nCoV-2019/V3
 artic_normalise: 500
-gisaid_clades: "${workflow.projectDir}/data/gisaid_clades.csv"
 gisaid_template: "${workflow.projectDir}/data/20210222_EpiCoV_BulkUpload_Template.xlsx"
 gisaid_submission_enabled: true
 publish_minimum_completion: 95

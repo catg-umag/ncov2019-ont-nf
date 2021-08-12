@@ -12,7 +12,7 @@ Currently includes:
 - Basecalling and demultiplexing using ONT Guppy (optional, requires Guppy previously installed)
 - Assembly and variant calling using [ARTIC](https://github.com/artic-network/fieldbioinformatics)
 - Variant annotation using [SnpEff](https://pcingola.github.io/SnpEff/)
-- Identification of clades/lineages of GISAID, Pangolin and Nexstrain
+- Identification of clades/lineages of Pangolin and Nexstrain (including common variant name)
 - Quality metrics and statistics (qc, coverage)
 - Generation of final summary in Excel format containing relevant information obtained by the pipeline
 - Inicial preparation for GISAID submission
@@ -97,7 +97,6 @@ The pipeline has various parameters to help to suit your needs. These are:
 | guppy_basecalling_extra_config | no       | "--device auto"              | Guppy extra options for basecalling (for example, GPU associated parameters).                                                                           |
 | artic_primers_scheme           | no       | nCoV-2019/V3                 | ARTIC primer scheme used.                                                                                                                               |
 | artic_normalise                | no       | 500                          | Coverage target used by the ARTIC pipeline.                                                                                                             |
-| gisaid_clades                  | no       | data/gisaid_clades.csv       | Path of the GISAID clades specification file (included in the repository).                                                                              |
 | gisaid_template                | no       | data/20210222_EpiCoV....xlsx | Path to the GISAID upload template (included in the repository).                                                                                        |
 | gisaid_submission_enabled      | no       | true                         | Enable (or not) the GISAID submission preparation.                                                                                                      |
 | publish_minimum_completion     | no       | 95                           | Percentage value (0 - 100) indicating the required percentage of covered bases of the reference to call an assembly "valid" for the submission process. |

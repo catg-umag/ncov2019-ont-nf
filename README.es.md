@@ -10,7 +10,7 @@ Actualmente incluye:
 - Basecalling y demultiplexado usando Guppy (opcional, se requiere Guppy instalado)
 - Ensamblaje y obtención de variantes usando [ARTIC](https://github.com/artic-network/fieldbioinformatics)
 - Anotación de variantes usando [SnpEff](https://pcingola.github.io/SnpEff/) (gen, cambio de aminoácido)
-- Identificación de linajes de GISAID, Pangolin y Nexstrain
+- Identificación de linajes de Pangolin y Nexstrain (incluyendo nombre común de variante)
 - Recolección de métricas de calidad y estadísticas (qc, coverage, etc)
 - Generación de resumen final en formato Excel incluyendo la información más relevante obtenida en la ejecución del pipeline
 - Preparación de planilla y secuencias para ser subidas a GISAID
@@ -97,7 +97,6 @@ Además de la posibilidad de especificar los inputs, es posible controlar alguno
 | guppy_basecalling_extra_config | no        | "--device auto"              | Opciones extras para Guppy al hacer basecalling (por ejemplo, parámetros asociados a la configuración de la GPU).                                              |
 | artic_primers_scheme           | no        | nCoV-2019/V3                 | Esquema de primers de ARTIC utilizado al construir la librería.                                                                                                |
 | artic_normalise                | no        | 500                          | Valor para establecer un valor de cobertura objetivo en el pipeline de ARTIC.                                                                                  |
-| gisaid_clades                  | no        | data/gisaid_clades.csv       | Ruta al archivo que contiene la descripción de los clados de GISAID (disponible en repositorio).                                                               |
 | gisaid_template                | no        | data/20210222_EpiCoV....xlsx | Ruta al template utilizado para subir muestras a GISAID (disponible en repositorio).                                                                           |
 | gisaid_submission_enabled      | no        | true                         | Habilitar (o no) la generación de los archivos preparados para cargar datos a GISAID.                                                                          |
 | publish_minimum_completion     | no        | 95                           | Valor entre 0 - 100 que indica el porcentaje de bases cubiertas respecto al genoma que se requerirá para la inclusión de estas muestras en la carga de GISAID. |

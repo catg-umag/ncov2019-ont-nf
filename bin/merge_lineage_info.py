@@ -10,11 +10,20 @@ def main():
     df_pangolin = (
         pd.read_csv(
             args.pangolin,
-            usecols=["taxon", "lineage"],
-            dtype={"taxon": str, "lineage": str},
+            usecols=["taxon", "lineage", "scorpio_call"],
+            dtype={"taxon": str, "lineage": str, "scorpio_call": str},
         )
-        .rename(columns={"taxon": "sample", "lineage": "pangolin"})
-        .assign(sample=lambda x: x["sample"].str.replace(r"/ARTIC.*$", "", regex=True))
+        .rename(
+            columns={
+                "taxon": "sample",
+                "lineage": "lineage_pango",
+                "scorpio_call": "variant",
+            }
+        )
+        .assign(
+            sample=lambda x: x["sample"].str.replace(r"/ARTIC.*$", "", regex=True),
+            variant=lambda x: x["variant"].replace(" .*", "", regex=True),
+        )
     )
     df_nextstrain = (
         pd.read_csv(
@@ -23,14 +32,16 @@ def main():
             sep=";",
             dtype={"seqName": str, "clade": str},
         )
-        .rename(columns={"seqName": "sample", "clade": "nextstrain"})
-        .assign(sample=lambda x: x["sample"].str.replace(r"/ARTIC.*$", "", regex=True))
-    )
-    df_gisaid = pd.read_csv(args.gisaid, dtype={"sample": str, "clade": str}).rename(
-        columns={"clade": "gisaid"}
+        .rename(columns={"seqName": "sample", "clade": "clade_nextstrain"})
+        .assign(
+            sample=lambda x: x["sample"].str.replace(r"/ARTIC.*$", "", regex=True),
+            clade_nextstrain=lambda x: x["clade_nextstrain"].str.replace(
+                " .*$", "", regex=True
+            ),
+        )
     )
 
-    df = df_pangolin.merge(df_gisaid.merge(df_nextstrain)).sort_values(["sample"])
+    df = df_pangolin.merge(df_nextstrain).sort_values(["sample"])
 
     df.to_csv(args.output, index=False)
 
@@ -46,7 +57,6 @@ def parse_arguments():
     parser.add_argument(
         "--nextstrain", "-n", required=True, help="Nextrain lineages CSV file"
     )
-    parser.add_argument("--gisaid", "-g", required=True, help="GISAID clades CSV file")
     parser.add_argument("--output", "-o", required=True, help="output CSV file")
 
     return parser.parse_args()
