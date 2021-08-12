@@ -54,7 +54,10 @@ def prepare_sample_info(
     with open(sample_summary) as f:
         reader = csv.DictReader(f)
         for row in reader:
-            if float(row["perc_covered"]) >= min_coverage_perc:
+            if (
+                row["perc_covered"] != ""
+                and float(row["perc_covered"]) >= min_coverage_perc
+            ):
                 coverage = round(float(row["meandepth"]))
                 sample_data[row["sample"]] = {"covv_coverage": f"{coverage}x"}
 

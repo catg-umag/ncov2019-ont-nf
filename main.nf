@@ -9,10 +9,10 @@ validateParameters(params, "${workflow.projectDir}/conf/parameter_config.yml")
 params.run_suffix = params.run_id != null ? "_${params.run_id}" : ''
 
 // load subworkflows after modifying parameters
-include { Assembly } from './modules/assembly.nf'
-include { GetStatistics } from './modules/statistics.nf'
-include { LineageAssesment } from './modules/lineages.nf'
-include { GenerateSummaries } from './modules/summaries.nf'
+include { Assembly } from './subworkflows/assembly.nf'
+include { GetStatistics } from './subworkflows/statistics.nf'
+include { LineageAssesment } from './subworkflows/lineages.nf'
+include { GenerateSummaries } from './subworkflows/summaries.nf'
 
 // transforms parameters in channels and variables
 Channel

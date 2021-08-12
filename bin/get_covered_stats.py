@@ -17,7 +17,7 @@ def main():
         n_counts = len(re.findall("N", str(seq.seq)))
         stats.append([name, n_counts])
 
-    stats = sorted(stats, key=lambda x: int(x[0]))
+    stats = sorted(stats, key=lambda x: x[0])
 
     with open(args.output, "w") as f:
         f.write("sample,bases_covered,perc_covered\n")
