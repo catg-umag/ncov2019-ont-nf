@@ -13,6 +13,7 @@ include { Assembly } from './subworkflows/assembly.nf'
 include { GetStatistics } from './subworkflows/statistics.nf'
 include { LineageAssesment } from './subworkflows/lineages.nf'
 include { GenerateSummaries } from './subworkflows/summaries.nf'
+include { GetSoftwareVersions } from './subworkflows/versions.nf'
 
 // transforms parameters in channels and variables
 Channel
@@ -53,7 +54,9 @@ workflow {
     Assembly.out.consensus,
     Assembly.out.vcf,
     GetStatistics.out.coverage,
-    LineageAssesment.out,
+    LineageAssesment.out.lineages,
     epicov_template
   )
+
+  GetSoftwareVersions()
 }

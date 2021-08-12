@@ -15,7 +15,7 @@ workflow LineageAssesment {
     )
 
   emit:
-    mergeLineages.out
+    lineages = mergeLineages.out
 }
 
 
