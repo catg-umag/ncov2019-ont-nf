@@ -4,27 +4,18 @@ nextflow.enable.dsl = 2
 workflow LineageAssesment {
   take:
     consensus       // single FASTA file containing all consensuses
-    vcf             // channel [name, VCF file]
-    gisaid_clades   // single CSV file contaning variations for each GISAID clade
 
   main:
     consensus
       | (assignPangolin & assignNextstrain)
-    
-    vcf
-      | map { it[1] }
-      | collect
-      | set { all_vcfs }
-    assignGisaid(all_vcfs, gisaid_clades)
 
     mergeLineages(
       assignPangolin.out,
-      assignGisaid.out,
       assignNextstrain.out
     )
 
   emit:
-    mergeLineages.out
+    lineages = mergeLineages.out
 }
 
 
@@ -41,27 +32,6 @@ process assignPangolin {
   script:
   """
   pangolin $consensus --outfile pangolin_lineages.csv
-  """
-}
-
-
-process assignGisaid {
-  label 'python'
-  publishDir "${params.output_directory}/lineages", mode: 'copy'
-
-  input:
-  path(vcfs)
-  path('gisaid_clade_mutations.csv')
-
-  output:
-  path('gisaid_clades.csv')
-
-  script:
-  """
-  assign_clades.py \
-    --clade-mutation-list gisaid_clade_mutations.csv \
-    --output gisaid_clades.csv \
-    --input-vcfs $vcfs
   """
 }
 
@@ -96,7 +66,6 @@ process mergeLineages {
 
   input:
   path(pangolin_lineages)
-  path(gisaid_lineages)
   path(nextstrain_lineages)
 
   output:
@@ -106,7 +75,6 @@ process mergeLineages {
   """
   merge_lineage_info.py \
     --pangolin $pangolin_lineages \
-    --gisaid $gisaid_lineages \
     --nextstrain $nextstrain_lineages \
     --output all_lineages.csv
   """
