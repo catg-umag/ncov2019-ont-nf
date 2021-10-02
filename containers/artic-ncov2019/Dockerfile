@@ -1,9 +1,12 @@
 FROM ubuntu:20.04
 
+ARG DEBIAN_FRONTEND="noninteractive"
+
 COPY VERSION /root/VERSION
 
-RUN apt update && apt upgrade -y
-RUN apt install -y wget
+RUN apt-get update && apt upgrade -y \
+    && apt-get install -y wget \
+    && rm -fr /var/lib/apt/lists/*
 
 # download primer schemes for nCoV-2019
 RUN mkdir /opt/artic-ncov2019
