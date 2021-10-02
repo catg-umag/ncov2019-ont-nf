@@ -2,15 +2,18 @@ name: Pandas custom image to DockerHub
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
+
+env:
+  IMAGE: catgumag/pandas-scibioxl
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
+
     steps:
-      - name: Check Out Repo 
+      - name: Check Out Repository
         uses: actions/checkout@v2
 
       - name: Login to Docker Hub
@@ -23,10 +26,9 @@ jobs:
         id: buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Read pandas version
-        run: |
-          VER=$(cat ./containers/pandas-scibioxl/requirements.txt | grep 'pandas' | sed 's/pandas==//')
-          echo "VERSION=$VER" >> $GITHUB_ENV
+      - name: Get current date (for tag)
+        id: getdate
+        run: echo ::set-output name=date::$(date +'%Y%m%d')
 
       - name: Build and push
         id: docker_build
@@ -34,7 +36,9 @@ jobs:
         with:
           context: ./containers/pandas-scibioxl/
           push: true
-          tags: catgumag/pandas-scibioxl:${{ env.VERSION }}
+          tags: |
+            ${{ env.IMAGE }}:${{ steps.getdate.outputs.date }}
+            ${{ env.IMAGE }}:latest
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
