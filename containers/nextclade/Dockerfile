@@ -11,8 +11,3 @@ RUN apt-get update && apt upgrade -y \
 RUN wget https://github.com/nextstrain/nextclade/releases/download/$(cat /root/VERSION)/nextclade-Linux-x86_64 \
         -O /usr/local/bin/nextclade
 RUN chmod +x /usr/local/bin/nextclade
-
-RUN mkdir /opt/nextclade_data
-RUN cd /opt/nextclade_data && \
-    wget -qO- https://codeload.github.com/nextstrain/nextclade/tar.gz/master \
-        | tar -xz --strip=2 "nextclade-master/data"

@@ -47,14 +47,12 @@ process assignNextstrain {
   path('nextstrain_lineages.csv')
 
   script:
-  data_dir = '/opt/nextclade_data/sars-cov-2'
   """
-  nextclade --input-fasta=$consensus \
-    --input-root-seq=${data_dir}/reference.fasta \
-    --genes=E,M,N,ORF1a,ORF1b,ORF3a,ORF6,ORF7a,ORF7b,ORF8,ORF9b,S \
-    --input-gene-map=${data_dir}/genemap.gff \
-    --input-tree=${data_dir}/tree.json \
-    --input-qc-config=${data_dir}/qc.json \
+  nextclade dataset get --name 'sars-cov-2' --output-dir 'data_sars-cov-2'
+
+  nextclade \
+    --input-fasta=$consensus \
+    --input-dataset data_sars-cov-2 \
     --output-csv=nextstrain_lineages.csv \
     --output-dir=.
   """
