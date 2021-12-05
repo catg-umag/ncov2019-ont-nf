@@ -56,7 +56,7 @@ def prepare_sample_info(
         for row in reader:
             if (
                 row["perc_covered"] != ""
-                and float(row["perc_covered"]) >= min_coverage_perc
+                and round(float(row["perc_covered"])) >= min_coverage_perc
             ):
                 coverage = round(float(row["meandepth"]))
                 sample_data[row["sample"]] = {"covv_coverage": f"{coverage}x"}
