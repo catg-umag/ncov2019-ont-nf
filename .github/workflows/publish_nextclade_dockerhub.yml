@@ -3,6 +3,8 @@ name: Nextclade to DockerHub
 on:
   push:
     branches: [main]
+    paths:
+      - containers/nextclade/*
   workflow_dispatch:
 
 env:

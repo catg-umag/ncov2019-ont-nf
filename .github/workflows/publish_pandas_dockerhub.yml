@@ -3,6 +3,8 @@ name: Pandas custom image to DockerHub
 on:
   push:
     branches: [main]
+    paths:
+      - containers/pandas-scibioxl/*
   workflow_dispatch:
 
 env:

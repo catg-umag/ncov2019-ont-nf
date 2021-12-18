@@ -3,6 +3,8 @@ name: ARTIC nCoV-2019 to DockerHub
 on:
   push:
     branches: [main]
+    paths:
+      - containers/artic-ncov2019/*
   workflow_dispatch:
 
 env:
