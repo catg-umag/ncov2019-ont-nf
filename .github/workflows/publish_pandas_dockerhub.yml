@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - containers/pandas-scibioxl/*
+      - 'containers/pandas-scibioxl/*'
   workflow_dispatch:
 
 env:
