@@ -47,7 +47,10 @@ def write_samples_sheet(sheet: Worksheet, df_samples: pd.DataFrame, min_coverage
         x[0].column_letter for x in sheet.columns if x[0].value == "perc_covered"
     )
     for i, row in enumerate(df_samples.itertuples(), start=2):
-        color = "cefbc1" if round(row.perc_covered) > min_coverage else "fbc1c1"
+        if pd.isna(row.perc_covered) or round(row.perc_covered) < min_coverage:
+            color = "fbc1c1"
+        else:
+            color = "cefbc1"
         sheet[f"{perc_column}{i}"].fill = PatternFill(
             start_color=color, fill_type="solid"
         )
