@@ -22,7 +22,7 @@ def main():
         )
         .assign(
             sample=lambda x: x["sample"].str.replace(r"/ARTIC.*$", "", regex=True),
-            variant=lambda x: x["variant"].replace(" .*", "", regex=True),
+            variant=lambda x: x["variant"].replace(r" \(.*", "", regex=True),
         )
     )
     df_nextstrain = (
