@@ -1,14 +1,15 @@
-name: Pandas custom image to DockerHub
+name: Pandas custom image to GitHub Container Registry
 
 on:
   push:
     branches: [main]
     paths:
-      - 'containers/pandas-scibioxl/*'
+      - "containers/pandas-scibioxl/*"
   workflow_dispatch:
 
 env:
-  IMAGE: catgumag/pandas-scibioxl
+  REGISTRY: ghcr.io
+  IMAGE: ${{ github.repository }}/pandas-scibioxl
 
 jobs:
   build:
@@ -18,11 +19,12 @@ jobs:
       - name: Check Out Repository
         uses: actions/checkout@v2
 
-      - name: Login to Docker Hub
+      - name: Log into Container Registry
         uses: docker/login-action@v1
         with:
-          username: ${{ secrets.DOCKER_HUB_USERNAME }}
-          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GH_TOKEN }}
 
       - name: Set up Docker Buildx
         id: buildx
@@ -39,8 +41,8 @@ jobs:
           context: ./containers/pandas-scibioxl/
           push: true
           tags: |
-            ${{ env.IMAGE }}:${{ steps.getdate.outputs.date }}
-            ${{ env.IMAGE }}:latest
+            ${{ env.REGISTRY }}/${{ env.IMAGE }}:${{ steps.getdate.outputs.date }}
+            ${{ env.REGISTRY }}/${{ env.IMAGE }}:latest
 
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
