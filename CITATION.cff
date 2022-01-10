@@ -1,0 +1,61 @@
+cff-version: 1.2.0
+message: "If this repository was useful for you, please cite it as below."
+authors:
+  - family-names: "Alvarez"
+    given-names: "Diego"
+    orcid: "https://orcid.org/0000-0003-0753-274X"
+  - family-names: "Aldridge"
+    given-names: "Jacqueline"
+    orcid: "https://orcid.org/0000-0003-3491-6589"
+title: "nCoV-2019 Analysis Pipeline (Oxford Nanopore)"
+url: "https://github.com/catg-umag/ncov2019-ont-nf"
+preferred-citation:
+  type: article
+  authors:
+    - family-names: "González-Puelma"
+      given-names: "Jorge"
+    - family-names: "Aldridge"
+      given-names: "Jacqueline"
+      orcid: "https://orcid.org/0000-0003-3491-6589"
+    - family-names: "Montes de Oca"
+      given-names: "Marco"
+      orcid: "https://orcid.org/0000-0002-3333-4977"
+    - family-names: "Pinto"
+      given-names: "Mónica"
+    - family-names: "Uribe-Paredes"
+      given-names: "Roberto"
+      orcid: "https://orcid.org/0000-0001-9519-8862"
+    - family-names: "Fernández-Goycoolea"
+      given-names: "José"
+      orcid: "https://orcid.org/0000-0001-5349-4348"
+    - family-names: "Alvarez-Saravia"
+      given-names: "Diego"
+      orcid: "https://orcid.org/0000-0003-0753-274X"
+    - family-names: "Álvarez"
+      given-names: "Hermy"
+    - family-names: "Encina"
+      given-names: "Gonzalo"
+    - family-names: "Wietzel"
+      given-names: "Thomas"
+      orcid: "https://orcid.org/0000-0002-9804-2123"
+    - family-names: "Muñoz"
+      given-names: "Rodrigo"
+    - family-names: "Olivera-Nappa"
+      given-names: "Álvaro"
+      orcid: "https://orcid.org/0000-0001-6053-7019"
+    - family-names: "Pantano"
+      given-names: "Sergio"
+      orcid: "https://orcid.org/0000-0001-6435-4543"
+    - family-names: "Navarrete"
+      given-names: "Marcelo A."
+      orcid: "https://orcid.org/0000-0002-2044-9548"
+  title: "Mutation in a SARS-CoV-2 Haplotype from Sub-Antarctic Chile Reveals New Insights into the Spike's Dynamics"
+  doi: "10.3390/v13050883"
+  journal: "Viruses"
+  publisher:
+    name: "MDPI AG"
+  volume: 13
+  issue: 5
+  start: 883
+  year: 2021
+  month: 5
