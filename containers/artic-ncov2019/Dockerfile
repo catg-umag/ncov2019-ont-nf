@@ -20,8 +20,8 @@ RUN cd /opt/artic-ncov2019 && \
         | tar -xz --strip=1 artic-ncov2019-master/primer_schemes/nCoV-2019
 
 # install artic
-COPY --chown=micromamba:micromamba env.yaml /tmp/env.yaml
-USER micromamba
+RUN cat /etc/passwd
+COPY env.yaml /tmp/env.yaml
 
 RUN micromamba install -y -f /tmp/env.yaml && \
     micromamba clean -aqy
