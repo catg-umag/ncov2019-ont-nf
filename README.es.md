@@ -24,14 +24,14 @@ Actualmente incluye:
    Con basecalling, singularity
 
    ```
-   nextflow run catg-umag/ncov2019-ont-nf -r v1.5 -profile singularity \
+   nextflow run catg-umag/ncov2019-ont-nf -r v1.6 -profile singularity \
        --sample_data <csv_file> --fast5_directory <fast5_dir>
    ```
 
    Sin basecalling, docker
 
    ```
-   nextflow run catg-umag/ncov2019-ont-nf -r v1.5 -profile docker \
+   nextflow run catg-umag/ncov2019-ont-nf -r v1.6 -profile docker \
        --sample_data <csv_file> --fast5_directory <fast5_dir> \
        --fastq_directory <fastq_dir> --sequencing_summary <txt_file>
    ```
@@ -110,7 +110,7 @@ Los parámetros pueden ser indicados a través de la línea de comandos (por eje
 El pipeline puede descargarse directamente y e indicar a Nextflow la ruta donde este se encuentra, pero también puede indicarse directamente `catg-umag/ncov2019-ont-n` y una versión a través del argumento `-r`, lo que descargará automáticamente el pipeline. Por ejemplo:
 
 ```
-nextflow run catg-umag/ncov2019-ont-nf -r v1.5 -profile singularity ...
+nextflow run catg-umag/ncov2019-ont-nf -r v1.6 -profile singularity ...
 ```
 
 Es imperativo utilizar el perfil `singularity` o `docker` para que utilice contenedores para acceder a las herramientas requeridas.
