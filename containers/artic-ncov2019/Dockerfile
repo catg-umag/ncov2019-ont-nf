@@ -6,9 +6,8 @@ LABEL author="Diego Alvarez (dialvarezs@gmail.com)"
 LABEL description="Contains ARTIC and nCoV-2019 primer schemes"
 LABEL org.opencontainers.image.source https://github.com/catg-umag/ncov2019-ont-nf
 
-SHELL ["/bin/bash", "-c"] 
-
 USER root
+
 RUN apt-get update && apt-get upgrade -y && \
     apt-get install -y wget procps && \
     rm -fr /var/lib/apt/lists/*
@@ -26,7 +25,6 @@ RUN micromamba install -y -f /tmp/env.yaml && \
     micromamba clean -aqy
 
 # reference files need to be indexed for the pipeline
-USER root
 RUN find /opt/artic-ncov2019/ -name '*.fasta' -exec /opt/conda/bin/samtools faidx {} \;
 
 ENV PATH=/opt/conda/bin/:$PATH
