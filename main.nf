@@ -29,7 +29,7 @@ sequencing_summary = params.sequencing_summary != null
 fast5_dir = pathCheck(params.fast5_directory) != null
   ? pathCheck(params.sequencing_summary)
   : null
-epicov_template = pathCheck(params.gisaid_template)
+epicov_template = file(params.gisaid_template)
 
 
 workflow {
