@@ -31,3 +31,5 @@ RUN micromamba install -yq -f /tmp/env.yaml && \
 
 # reference files need to be indexed for the pipeline
 RUN find /opt/artic-ncov2019/ -name '*.fasta' -exec samtools faidx {} \;
+
+ENV PATH="/opt/conda/bin:${PATH}"
