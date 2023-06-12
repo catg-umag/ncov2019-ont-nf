@@ -2,27 +2,17 @@ sample_data:
   required: true
   validate: file
 fast5_directory:
-  required: true
-  validate: directory
-fastq_directory:
   required: false
-  pathtype: directory
+  validate: directory
 sequencing_summary:
-  required_if: fastq_directory
+  required_if: fast5_directory
   validate: file
 run_id:
   required: false
-guppy_basecalling_config:
-  required: false
-guppy_barcodes:
-  required: false
-guppy_demux_both_ends:
+artic_use_medaka:
   required: false
   validate: boolean
-guppy_cpus:
-  required: false
-  validate: integer
-guppy_basecalling_extra_config:
+artic_medaka_model:
   required: false
 artic_primers_scheme:
   required: false
