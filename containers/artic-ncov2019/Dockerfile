@@ -23,7 +23,7 @@ USER $MAMBA_USER
 # install artic
 COPY --chown=$MAMBA_USER:$MAMBA_USER env.yaml /tmp/env.yaml
 RUN micromamba install -yq -f /tmp/env.yaml && \
-    micromamba clean -aqy
+    micromamba clean -ayq
 
 # reference files need to be indexed for the pipeline
 RUN find /opt/primer-schemes/ -name '*.fasta' -exec samtools faidx {} \;
