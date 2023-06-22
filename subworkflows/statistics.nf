@@ -25,7 +25,7 @@ workflow GetStatistics {
 
 
 process alignmentStats {
-  tag "$sample"
+  tag { sample }
   label 'samtools'
   publishDir "${params.output_directory}/qc/alignment_stats", mode: 'copy'
 
@@ -46,7 +46,7 @@ process alignmentStats {
 
 process fastQC {
   label 'fastqc'
-  tag "$sample"
+  tag { sample }
   publishDir "${params.output_directory}/qc/fastqc", mode: 'copy'
   cpus 1
 

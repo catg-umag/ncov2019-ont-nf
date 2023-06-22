@@ -3,31 +3,18 @@ nextflow.enable.dsl = 2
 
 workflow Assembly {
   take:
-    sample_names        // channel [barcode, sample]
+    sample_names        // channel [sample_id, fastq_file]
     fast5_dir           // single directory containing FAST5 files
-    fastq_dirs          // channel [directory] (one for each barcode)
     sequencing_summary  // single TXT file
 
    main:
-    if (fastq_dirs == null) {
-      basecalling(fast5_dir)
-
-      demultiplexing(basecalling.out.all)
-        | flatten
-        | set { fastq_dirs }
-
-      sequencing_summary = basecalling.out.sequencing_summary
-    }
-
-    fastq_dirs
-      | map { [it.baseName, it] }
-      | join(sample_names)
+    samples
       | filtering
 
     articConsensus(
       fast5_dir,
       sequencing_summary,
-      filtering.out.flat
+      filtering.out
     )
 
     articConsensus.out.consensus
@@ -49,80 +36,34 @@ workflow Assembly {
 }
 
 
-process basecalling {
-  label 'guppy'
-  label 'gpu'
-  cpus params.guppy_cpus
-  
-  input:
-  path(fast5_dir)
-
-  output:
-  path('basecalled/'), emit: all
-  path('basecalled/sequencing_summary.txt'), emit: sequencing_summary
-
-  script:
-  """
-  guppy_basecaller \
-    --input_path $fast5_dir \
-    --save_path basecalled \
-    --config ${params.guppy_basecalling_config} \
-    --recursive \
-    --num_callers ${task.cpus} \
-    ${params.guppy_basecalling_extra_config}
-  """
-}
-
-
-process demultiplexing {
-  label 'guppy'
-  cpus params.guppy_cpus
-
-  input:
-  path(fastq_dir)
-
-  output:
-  path('demultiplexed/barcode*')
-  
-  script:
-  both_ends = params.guppy_demux_both_ends ? '--require_barcodes_both_ends' : ''
-  """
-  guppy_barcoder \
-    --input_path ${fastq_dir}/pass \
-    --save_path demultiplexed/ \
-    --recursive \
-    --barcode_kits "${params.guppy_barcodes}" \
-    $both_ends \
-    --worker_threads ${task.cpus}
-  """
-}
-
-
 process filtering {
-  tag "$sample"
-  label 'artic'
+  tag { sample }
+  label 'fastp'
   publishDir "${params.output_directory}/raw_data/", mode: 'copy', pattern: '*.fastq.gz'
   cpus 1
 
   input:
-  tuple val(barcode), path(fastq_dir), val(sample)
+  tuple val(sample), path(fastq_file)
 
   output:
-  tuple val(sample), path("${sample}.fastq"), emit: flat
-  tuple val(sample), path("${sample}.fastq.gz"), emit: compressed
+  tuple val(sample), path("filtered/${sample}.fastq.gz")
 
   script:
   """
-  artic guppyplex --min-length 400 --max-length 700 \
-    --directory $fastq_dir --output ${sample}.fastq
-
-  gzip -c ${sample}.fastq > ${sample}.fastq.gz
+  mkdir filtered
+  fastp \
+    -i ${fastq_file} \
+    -o filtered/${sample}.fastq.gz \
+    --length_required 400 \
+    --length_limit 700 \
+    --disable_adapter_trimming \
+    --disable_quality_filtering
   """
 }
 
 
 process articConsensus {
-  tag "$sample"
+  tag { sample }
   label 'artic'
   publishDir "${params.output_directory}/artic/${sample}", mode: 'copy'
   cpus 4
@@ -140,14 +81,17 @@ process articConsensus {
   tuple val(sample), path('*.pass.vcf.gz'), emit: vcf
 
   script:
+  variant_tool_opts = params.artic_use_medaka
+    ? "--medaka --medaka_model ${params.artic_medaka_model}"
+    : "--fast5-directory ${fast5_dir} --sequencing-summary ${sequencing_summary}"
   """
-  artic minion --threads ${task.cpus} \
+  artic minion \
+    --threads ${task.cpus} \
     --normalise ${params.artic_normalise} \
     --scheme-directory /opt/artic-ncov2019/primer_schemes/ \
-    --fast5-directory $fast5_dir \
-    --sequencing-summary $sequencing_summary \
-    --read-file $fastq_file \
-    ${params.artic_primer_scheme} $sample
+    ${variant_tool_opts} \
+    --read-file ${fastq_file} \
+    ${params.artic_primer_scheme} ${sample}
   """
 }
 
@@ -166,7 +110,7 @@ process downloadSnpEffDb {
 
 
 process annotateVCFs {
-  tag "$sample"
+  tag { sample }
   label 'snpeff'
   publishDir "${params.output_directory}/vcf", mode: 'copy'
 

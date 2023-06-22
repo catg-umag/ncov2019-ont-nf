@@ -1,7 +1,7 @@
 #!/usr/bin/env nextflow
 nextflow.enable.dsl = 2
 
-include { addDefaultParamValues; validateParameters } from './lib/groovy/utils.gvy'
+include { addDefaultParamValues; validateParameters; pathCheck } from './lib/groovy/utils.gvy'
 
 // pre-process parameters (defaults and validations)
 addDefaultParamValues(params, "${workflow.projectDir}/params.default.yml")
@@ -19,27 +19,23 @@ include { GetSoftwareVersions } from './subworkflows/versions.nf'
 Channel
   .fromPath(params.sample_data)
   .splitCsv(header: true)
-  .map { row -> [row.barcode, row.sample] }
-  .set { sample_names }
-
-fastq_dirs = params.fastq_directory != null
-  ? Channel.fromPath("${params.fastq_directory}/barcode*", type: 'dir')
-  : null
+  .map { row -> [row.sample, pathCheck(row.fastq_file)] }
+  .set { samples }
 
 sequencing_summary = params.sequencing_summary != null
-  ? file(params.sequencing_summary)
+  ? pathCheck(params.sequencing_summary)
   : null
 
-samples_data = file(params.sample_data)
-fast5_dir = file(params.fast5_directory)
+fast5_dir = pathCheck(params.fast5_directory) != null
+  ? pathCheck(params.sequencing_summary)
+  : null
 epicov_template = file(params.gisaid_template)
 
 
 workflow {
   Assembly(
-    sample_names,
+    samples,
     fast5_dir,
-    fastq_dirs,
     sequencing_summary
   )
 

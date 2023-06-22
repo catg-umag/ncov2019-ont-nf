@@ -11,11 +11,6 @@ workflow GetSoftwareVersions {
     | mix
     | set { versions }
 
-  if (params.fastq_directory == null) {
-    getGuppyVersion()
-    versions = versions.mix(getGuppyVersion.out)
-  }
-
   versions
     | collectFile(
         storeDir: "${params.output_directory}",
@@ -25,19 +20,6 @@ workflow GetSoftwareVersions {
       ) {
         ['software_versions.tsv', "${it[0]}\t${it[1]}"]
       }
-}
-
-
-process getGuppyVersion {
-  label 'guppy'
-
-  output:
-  tuple val('Guppy'), stdout
-
-  script:
-  """
-  guppy_basecaller --version | grep -Eo '([0-9]+\\.)+[0-9]+' | tr -d '\n'
-  """
 }
 
 

@@ -49,7 +49,7 @@ process getReferenceCoveredStats {
   
   script:
   """
-  get_covered_stats.py -i $consensuses -o covered_stats.csv
+  get_covered_stats.py -i ${consensuses} -o covered_stats.csv
   """
 }
 
@@ -68,7 +68,7 @@ process gatherVcfInfo {
   """
   gather_vcf_info.py \
     --output variants_list${params.run_suffix}.csv \
-    --input-vcfs $vcfs
+    --input-vcfs ${vcfs}
   """
 }
 
@@ -89,10 +89,10 @@ process mergeSampleData {
   script:
   """
   merge_sample_data.py \
-    --base-data $base \
-    --lineages $lineages \
-    --coverage-stats $coverage \
-    --ref-coverage-stats $ref_coverage \
+    --base-data ${base} \
+    --lineages ${lineages} \
+    --coverage-stats ${coverage} \
+    --ref-coverage-stats ${ref_coverage} \
     --output sample_summary${params.run_suffix}.csv
   """
 }

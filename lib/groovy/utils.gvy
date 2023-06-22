@@ -77,6 +77,22 @@ def evaluateWorkflowVars(value) {
   return evaluated
 }
 
+/*
+ * Check if file exists of throw error
+ */
+def pathCheck(path, isDirectory = false) {
+  f = file(path)
+  if (!f.exists()) {
+    throwError("Path ${path} does not exist")
+  } else if (!f.isFile() && !isDirectory) {
+    throwError("Path ${path} is not a file")
+  } else if (!f.isDirectory() && isDirectory) {
+    throwError("Path ${path} is not a directory")
+  }
+
+  return f
+}
+
 def isEmpty(params, name) {
   return !params.containsKey(name) || params[name] == null
 }
