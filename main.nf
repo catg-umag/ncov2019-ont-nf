@@ -1,6 +1,4 @@
 #!/usr/bin/env nextflow
-nextflow.enable.dsl = 2
-
 include { addDefaultParamValues; validateParameters; pathCheck } from './lib/groovy/utils.gvy'
 
 // pre-process parameters (defaults and validations)

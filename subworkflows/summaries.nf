@@ -1,6 +1,3 @@
-nextflow.enable.dsl = 2
-
-
 workflow GenerateSummaries {
   take:
     samples_data      // single CSV file containing sample information

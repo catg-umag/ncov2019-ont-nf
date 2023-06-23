@@ -1,6 +1,3 @@
-nextflow.enable.dsl = 2
-
-
 workflow LineageAssesment {
   take:
     consensus       // single FASTA file containing all consensuses

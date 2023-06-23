@@ -1,6 +1,3 @@
-nextflow.enable.dsl = 2
-
-
 workflow GetStatistics {
   take:
     bamfiles  // channel [name, BAM file]

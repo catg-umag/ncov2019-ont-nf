@@ -1,6 +1,3 @@
-nextflow.enable.dsl = 2
-
-
 workflow Assembly {
   take:
     samples             // channel [sample_id, fastq_file]
