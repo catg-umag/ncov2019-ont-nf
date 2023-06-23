@@ -3,7 +3,7 @@ nextflow.enable.dsl = 2
 
 workflow Assembly {
   take:
-    sample_names        // channel [sample_id, fastq_file]
+    samples             // channel [sample_id, fastq_file]
     fast5_dir           // single directory containing FAST5 files
     sequencing_summary  // single TXT file
 
@@ -14,7 +14,8 @@ workflow Assembly {
     articConsensus(
       fast5_dir,
       sequencing_summary,
-      filtering.out
+      filtering.out,
+      getPrimerSchemes()
     )
 
     articConsensus.out.consensus
@@ -62,6 +63,19 @@ process filtering {
 }
 
 
+process getPrimerSchemes {
+  label 'git'
+
+  output:
+  path('primer-schemes')
+
+  script:
+  """
+  git clone https://github.com/artic-network/primer-schemes/ 
+  """
+}
+
+
 process articConsensus {
   tag { sample }
   label 'artic'
@@ -73,6 +87,7 @@ process articConsensus {
   path(fast5_dir)
   path(sequencing_summary)
   tuple val(sample), path(fastq_file)
+  path(primer_schemes)
 
   output:
   tuple val(sample), path('*')
@@ -82,13 +97,13 @@ process articConsensus {
 
   script:
   variant_tool_opts = params.artic_use_medaka
-    ? "--medaka --medaka_model ${params.artic_medaka_model}"
+    ? "--medaka --medaka-model ${params.artic_medaka_model}"
     : "--fast5-directory ${fast5_dir} --sequencing-summary ${sequencing_summary}"
   """
   artic minion \
     --threads ${task.cpus} \
     --normalise ${params.artic_normalise} \
-    --scheme-directory /opt/artic-ncov2019/primer_schemes/ \
+    --scheme-directory ${primer_schemes} \
     ${variant_tool_opts} \
     --read-file ${fastq_file} \
     ${params.artic_primer_scheme} ${sample}

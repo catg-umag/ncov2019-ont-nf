@@ -112,8 +112,8 @@ process generateExcelSummary {
   script:
   """
   generate_excel_summary.py \
-    --sample-summary $samples \
-    --variants-list $variants \
+    --sample-summary ${samples} \
+    --variants-list ${variants} \
     --required-ref-coverage ${params.publish_minimum_completion} \
     --output summary${params.run_suffix}.xlsx
   """
@@ -137,10 +137,10 @@ process prepareSubmission {
   script:
   """
   generate_submission.py \
-    --submission-template $template \
-    --base-data $samples_data \
-    --sample-summary $samples_summary \
-    --input-sequences $sequences \
+    --submission-template ${template} \
+    --base-data ${samples_data} \
+    --sample-summary ${samples_summary} \
+    --input-sequences ${sequences} \
     --required-ref-coverage ${params.publish_minimum_completion} \
     --output-excel EpiCov_Upload${params.run_suffix}.xlsx \
     --output-sequences sequences${params.run_suffix}.fasta

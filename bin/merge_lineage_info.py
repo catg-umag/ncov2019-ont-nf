@@ -29,7 +29,7 @@ def main():
         pd.read_csv(
             args.nextstrain,
             usecols=["seqName", "clade"],
-            sep=";",
+            sep="\t",
             dtype={"seqName": str, "clade": str},
         )
         .rename(columns={"seqName": "sample", "clade": "clade_nextstrain"})

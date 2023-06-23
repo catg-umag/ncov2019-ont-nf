@@ -21,7 +21,7 @@ def main():
         df_base.merge(df_lineage, how="outer")
         .merge(df_coverage, how="outer")
         .merge(df_refcoverage, how="outer")
-    ).sort_values("barcode")
+    ).sort_values("sample")
 
     df.to_csv(args.output, index=False)
 

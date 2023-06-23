@@ -25,8 +25,8 @@ workflow GetStatistics {
 
 
 process alignmentStats {
-  tag { sample }
   label 'samtools'
+  tag { sample }
   publishDir "${params.output_directory}/qc/alignment_stats", mode: 'copy'
 
   input:

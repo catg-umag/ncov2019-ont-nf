@@ -16,7 +16,7 @@ include { GenerateSummaries } from './subworkflows/summaries.nf'
 include { GetSoftwareVersions } from './subworkflows/versions.nf'
 
 // transforms parameters in channels and variables
-Channel
+channel
   .fromPath(params.sample_data)
   .splitCsv(header: true)
   .map { row -> [row.sample, pathCheck(row.fastq_file)] }
@@ -24,12 +24,14 @@ Channel
 
 sequencing_summary = params.sequencing_summary != null
   ? pathCheck(params.sequencing_summary)
-  : null
+  : file('NOFILE_SEQSUMM')
 
-fast5_dir = pathCheck(params.fast5_directory) != null
+fast5_dir = params.fast5_directory != null
   ? pathCheck(params.sequencing_summary)
-  : null
+  : file('NOFILE_FAST5')
 epicov_template = file(params.gisaid_template)
+
+samples_file = file(params.sample_data)
 
 
 workflow {
@@ -46,7 +48,7 @@ workflow {
   )
 
   GenerateSummaries(
-    samples_data,
+    samples_file,
     Assembly.out.consensus,
     Assembly.out.vcf,
     GetStatistics.out.coverage,

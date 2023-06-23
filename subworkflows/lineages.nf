@@ -31,7 +31,7 @@ process assignPangolin {
   
   script:
   """
-  pangolin $consensus --outfile pangolin_lineages.csv
+  pangolin ${consensus} --outfile pangolin_lineages.csv
   """
 }
 
@@ -44,17 +44,16 @@ process assignNextstrain {
   path(consensus)
 
   output:
-  path('nextstrain_lineages.csv')
+  path('nextstrain_lineages.tsv')
 
   script:
   """
   nextclade dataset get --name 'sars-cov-2' --output-dir 'data_sars-cov-2'
 
-  nextclade \
-    --input-fasta=$consensus \
+  nextclade run \
     --input-dataset data_sars-cov-2 \
-    --output-csv=nextstrain_lineages.csv \
-    --output-dir=.
+    --output-tsv nextstrain_lineages.tsv \
+    ${consensus}
   """
 }
 
@@ -72,8 +71,8 @@ process mergeLineages {
   script:
   """
   merge_lineage_info.py \
-    --pangolin $pangolin_lineages \
-    --nextstrain $nextstrain_lineages \
+    --pangolin ${pangolin_lineages} \
+    --nextstrain ${nextstrain_lineages} \
     --output all_lineages.csv
   """
 }

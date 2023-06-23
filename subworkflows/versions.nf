@@ -16,9 +16,9 @@ workflow GetSoftwareVersions {
         storeDir: "${params.output_directory}",
         newLine: true,
         sort: true,
-        seed: 'Software\tVersion'
+        seed: 'software,version'
       ) {
-        ['software_versions.tsv', "${it[0]}\t${it[1]}"]
+        ['software_versions.csv', "${it[0]},${it[1]}"]
       }
 }
 
@@ -82,6 +82,6 @@ process getNextcladeVersion {
 
   script:
   """
-  nextclade --version | tr -d '\n'
+  nextclade --version | grep -Eo '([0-9]+\\.)+[0-9]+' | tr -d '\n'
   """
 }

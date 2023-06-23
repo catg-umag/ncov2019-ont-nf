@@ -4,7 +4,7 @@ sequencing_summary:
 run_id:
 artic_use_medaka: false
 artic_medaka_model: r103_hac_g507
-artic_primer_scheme: nCoV-2019/V4.1
+artic_primer_scheme: SARS-CoV-2/V4.1
 artic_normalise: 500
 gisaid_template: "${workflow.projectDir}/data/20210222_EpiCoV_BulkUpload_Template.xlsx"
 gisaid_submission_enabled: true
