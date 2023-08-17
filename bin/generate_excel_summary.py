@@ -203,8 +203,8 @@ def format_aminoacid_short(aa_change: str) -> str:
     }
 
     aa_change_fmt = aa_change.replace("p.", "")
-    for l, s in aa_list.items():
-        aa_change_fmt = aa_change_fmt.replace(l, s)
+    for long, short in aa_list.items():
+        aa_change_fmt = aa_change_fmt.replace(long, short)
 
     return aa_change_fmt
 

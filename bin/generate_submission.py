@@ -2,7 +2,6 @@
 import argparse
 import csv
 import re
-from typing import Dict
 
 from Bio import SeqIO
 from openpyxl import load_workbook
@@ -25,7 +24,7 @@ def main():
     wb.save(filename=args.output)
 
 
-def fill_sheet(sheet: Worksheet, sample_data: Dict[str, Dict[str, str]]):
+def fill_sheet(sheet: Worksheet, sample_data: dict[str, dict[str, str]]):
     # delete example row
     sheet.delete_rows(3)
 
@@ -47,7 +46,7 @@ def prepare_sample_info(
     sample_summary: str,
     output_fasta_filename: str,
     min_coverage_perc: int,
-) -> Dict[str, Dict[str, str]]:
+) -> dict[str, dict[str, str]]:
     sample_data = {}
 
     # load coverages
@@ -72,18 +71,22 @@ def prepare_sample_info(
 
     # add generic info
     for info in sample_data.values():
-        info["fn"] = output_fasta_filename
-        info["covv_type"] = "betacoronavirus"
-        info["covv_passage"] = "Original"
-        info["covv_host"] = "Human"
-        info["covv_seq_technology"] = "Nanopore MinION"
-        info["covv_assembly_method"] = "ARTIC-nCoV-bioinformaticsSOP-v1.1.0"
+        info.update(
+            {
+                "fn": output_fasta_filename,
+                "covv_type": "betacoronavirus",
+                "covv_passage": "Original",
+                "covv_host": "Human",
+                "covv_seq_technology": "Nanopore MinION",
+                "covv_assembly_method": "ARTIC-nCoV-bioinformaticsSOP-v1.1.0",
+            }
+        )
 
     return sample_data
 
 
 def process_sequences(
-    input_filename: str, output_filename: str, sample_data: Dict[str, Dict[str, str]]
+    input_filename: str, output_filename: str, sample_data: dict[str, dict[str, str]]
 ):
     """
     Load sequences, filter presence in sample_data, rename and write them

@@ -25,7 +25,7 @@ def process_vcf_file(filename: str) -> List[List[str]]:
     variants = []
     name = re.sub(r"^.*/|\..*$", "", filename)
     with open(filename) as f:
-        for row in f.readlines():
+        for row in f:
             if row.startswith("##INFO=<ID=ANN"):
                 ann_fields = (
                     re.search(r"(?<=')[A-Za-z|/_. ]+(?=')", row).group().split(" | ")
@@ -62,7 +62,8 @@ def parse_arguments():
         "--output",
         "-o",
         required=True,
-        help="ouput CSV containing each sample with its clade (basename of files will be used as sample)",
+        help="ouput CSV containing each sample with its clade "
+        "(basename of files will be used as sample)",
     )
     parser.add_argument(
         "--input-vcfs",
