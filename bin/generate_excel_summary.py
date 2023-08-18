@@ -14,10 +14,14 @@ def main():
     args = parse_arguments()
 
     # load data
-    df_samples = pd.read_csv(args.sample_summary).assign(
-        sample=lambda x: x["sample"].astype(str),
-        meandepth=lambda x: x.meandepth.round(),
-        perc_covered=lambda x: x.perc_covered.round(1),
+    df_samples = (
+        pd.read_csv(args.sample_summary)
+        .assign(
+            sample=lambda x: x["sample"].astype(str),
+            meandepth=lambda x: x.meandepth.round(),
+            perc_covered=lambda x: x.perc_covered.round(1),
+        )
+        .drop(columns=["fastq_file"])
     )
     df_variants = get_variant_summary(args.variants_list)
 
