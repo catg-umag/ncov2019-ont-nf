@@ -22,9 +22,3 @@ RUN apt-get update && apt upgrade -y \
 	&& rm -fr /var/lib/apt/lists/*
 
 COPY --from=base /usr/local/ /usr/local
-
-WORKDIR /data
-
-RUN soffice --headless --convert-to xls --outdir . EpiCov_Upload_ucn01.xlsx
-
-RUN ls EpiCov_Upload_ucn01.xls
