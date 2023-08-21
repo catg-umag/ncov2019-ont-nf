@@ -36,6 +36,14 @@ def validateParameters(params, paramConfigFile) {
       throwError("parameter ${name} is required if ${conf.required_if} is specified")
     }
 
+    if (
+      conf.containsKey('required_if_true')
+      && params[conf.required_if_true]
+      && isEmpty(params, name)
+      ) {
+      throwError("parameter ${name} is required if ${conf.required_if_true} is enabled")
+    }
+
     // check type
     if (!isEmpty(params, name) && conf.containsKey('validate')) {
       valid = true
@@ -102,5 +110,5 @@ def getParamValue(params, name, defaultValue) {
 }
 
 def throwError(msg) {
-  exit 1, "ERROR: $msg"
+  exit 1, "$msg"
 }

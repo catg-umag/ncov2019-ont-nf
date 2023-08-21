@@ -2,20 +2,20 @@ sample_data:
   required: true
   validate: file
 fast5_directory:
-  required: false
+  required_if_true: artic_use_nanopolish
   validate: directory
 sequencing_summary:
-  required_if: fast5_directory
+  required_if_true: artic_use_nanopolish
   validate: file
 run_id:
   required: false
-artic_use_medaka:
+artic_primer_scheme:
   required: false
-  validate: boolean
 artic_medaka_model:
   required: false
-artic_primers_scheme:
+artic_use_nanopolish:
   required: false
+  validate: boolean
 artic_normalise:
   validate: integer
 gisaid_template:
@@ -27,6 +27,8 @@ gisaid_submission_enabled:
 publish_minimum_completion:
   required: false
   validate: integer
+multiqc_config:
+  required: false
+  validate: file
 output_directory:
   required: false
-  pathtype: directory
