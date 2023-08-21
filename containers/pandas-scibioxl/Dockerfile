@@ -14,15 +14,14 @@ RUN apt-get update && apt upgrade -y && \
 RUN pip3 install --break-system-packages --no-cache-dir -r /tmp/requirements.txt
 
 
-FROM debian:12-slim as final
+FROM python:3.11-slim as final
 
 RUN apt-get update && apt upgrade -y \
-	&& apt-get install -y --no-install-recommends \
+	&& apt-get install -y \
 		python3 procps default-jre libreoffice-calc-nogui \
 	&& rm -fr /var/lib/apt/lists/*
 
 COPY --from=base /usr/local/ /usr/local
-COPY EpiCov_Upload_ucn01.xlsx /data/EpiCov_Upload_ucn01.xlsx
 
 WORKDIR /data
 
