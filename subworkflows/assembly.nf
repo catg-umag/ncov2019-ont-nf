@@ -93,9 +93,9 @@ process articConsensus {
   tuple val(sample), path('*.pass.vcf.gz'), emit: vcf
 
   script:
-  variant_tool_opts = params.artic_use_medaka
-    ? "--medaka --medaka-model ${params.artic_medaka_model}"
-    : "--fast5-directory ${fast5_dir} --sequencing-summary ${sequencing_summary}"
+  variant_tool_opts = params.artic_use_nanopolish
+    ? "--fast5-directory ${fast5_dir} --sequencing-summary ${sequencing_summary}"
+    : "--medaka --medaka-model ${params.artic_medaka_model}"
   """
   artic minion \
     --threads ${task.cpus} \
