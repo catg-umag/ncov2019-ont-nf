@@ -37,8 +37,11 @@ workflow Assembly {
 process filtering {
   tag { sample }
   label 'fastp'
-  publishDir "${params.output_directory}/raw_data/", mode: 'copy', pattern: '*.fastq.gz'
-  cpus 1
+  publishDir "${params.output_directory}/fastq_data/", \
+    mode: 'copy', \
+    pattern: 'filtered/*.fastq.gz', \
+    saveAs: { it.replaceFirst(/filtered\//, '') }
+  cpus 2
 
   input:
   tuple val(sample), path(fastq_file)
@@ -55,7 +58,8 @@ process filtering {
     --length_required 400 \
     --length_limit 700 \
     --disable_adapter_trimming \
-    --disable_quality_filtering
+    --disable_quality_filtering \
+    --thread ${task.cpus}
   """
 }
 
