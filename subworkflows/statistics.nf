@@ -1,6 +1,7 @@
 workflow GetStatistics {
   take:
-    bamfiles  // channel [name, BAM file]
+    bamfiles        // channel [name, BAM file]
+    multiqc_config  // file
 
   main:
     alignmentStats(bamfiles)
@@ -8,7 +9,8 @@ workflow GetStatistics {
     bamfiles
       | fastQC
       | collect
-      | multiQC
+      | set { fastqc_reports }
+    multiQC(fastqc_reports, multiqc_config)
 
     alignmentStats.out.coverage
       | collectFile(keepHeader: true, skip: 1) {
@@ -67,13 +69,13 @@ process multiQC {
   
   input:
   path(fastqc_reports)
+  path('muiqc_config.yaml')
 
   output:
   tuple path('multiqc_data'), path('multiqc_report.html')
 
   script:
   """
-  cp ${workflow.projectDir}/conf/multiqc_config.yaml .
   multiqc .
   """
 }

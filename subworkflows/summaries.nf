@@ -143,7 +143,7 @@ process prepareSubmission {
     --output-sequences sequences${params.run_suffix}.fasta
 
   # convert xlsx to xls and delete xlsx
-  unoconv -o EpiCov_Upload${params.run_suffix}.xls EpiCov_Upload${params.run_suffix}.xlsx
+  soffice --convert-to xls --outdir . EpiCov_Upload${params.run_suffix}.xlsx
   rm EpiCov_Upload${params.run_suffix}.xlsx
   """
 }

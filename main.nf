@@ -27,9 +27,10 @@ sequencing_summary = params.sequencing_summary != null
 fast5_dir = params.fast5_directory != null
   ? pathCheck(params.sequencing_summary)
   : file('NOFILE_FAST5')
-epicov_template = file(params.gisaid_template)
+epicov_template = pathCheck(params.gisaid_template)
 
-samples_file = file(params.sample_data)
+samples_file = pathCheck(params.sample_data)
+multiqc_config = pathCheck(params.multiqc_config)
 
 
 workflow {
@@ -39,7 +40,10 @@ workflow {
     sequencing_summary
   )
 
-  GetStatistics(Assembly.out.bam)
+  GetStatistics(
+    Assembly.out.bam,
+    multiqc_config
+  )
 
   LineageAssesment(
     Assembly.out.consensus,
