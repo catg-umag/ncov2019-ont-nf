@@ -48,6 +48,8 @@ process fastQC {
   tag { sample }
   publishDir "${params.output_directory}/qc/fastqc", mode: 'copy'
   cpus 1
+  memory { 2.GB * task.attempt }
+  errorStrategy { task.attempt <= 3 ? 'retry' : 'terminate' }
 
   input:
   tuple val(sample), path(bamfile)
