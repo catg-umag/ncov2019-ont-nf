@@ -7,7 +7,6 @@ Desarrollado para sistematizar el análisis bioinformático asociado a la vigila
 
 Actualmente incluye:
 
-- Basecalling y demultiplexado usando Guppy (opcional, se requiere Guppy instalado)
 - Ensamblaje y obtención de variantes usando [ARTIC](https://github.com/artic-network/fieldbioinformatics)
 - Anotación de variantes usando [SnpEff](https://pcingola.github.io/SnpEff/) (gen, cambio de aminoácido)
 - Identificación de linajes de Pangolin y Nexstrain (incluyendo nombre común de variante)
@@ -17,53 +16,48 @@ Actualmente incluye:
 
 ## Inicio Rápido
 
-1. Instalar Nextflow, Singularity (o Docker) y Guppy (si se desea hacer basecalling)
-2. Crear un archivo CSV con las columnas `barcode` y `sample`, que tenga los barcodes de Nanopore (barcode01, barcode02, etc) y un nombre de muestra para cada uno de ellos. Si se planea la carga en GISAID, es recomendable tener una tercera columna: `gisaid_covv_virus_name`, que tenga los nombres que se utilizarán para subir las muestras a GISAID (debe tener el formato `hCoV-19/<Pais>/<ID>/<Año>`).
+1. Instalar Nextflow y Singularity (o Docker)
+2. Crear un archivo CSV con las columnas `sample` y `fastq_file`, que asocie los nombres de las muestras con los datos en FASTQ. Si se planea la carga en GISAID, es recomendable tener una tercera columna: `gisaid_covv_virus_name`, que tenga los nombres que se utilizarán para subir las muestras a GISAID (debe tener el formato `hCoV-19/<Pais>/<ID>/<Año>`).
 3. Ejecutar el pipeline. Ejemplos:
 
-   Con basecalling, singularity
+   Usando Apptainer:
 
-   ```
-   nextflow run catg-umag/ncov2019-ont-nf -r v1.6 -profile singularity \
-       --sample_data <csv_file> --fast5_directory <fast5_dir>
+   ```bash
+   nextflow run catg-umag/ncov2019-ont-nf -r v2.0.0 -profile apptainer \
+       --sample_data <csv_file>
    ```
 
-   Sin basecalling, docker
+    Usando Nanopolish en lugar de Medaka, con Docker:
 
-   ```
-   nextflow run catg-umag/ncov2019-ont-nf -r v1.6 -profile docker \
-       --sample_data <csv_file> --fast5_directory <fast5_dir> \
-       --fastq_directory <fastq_dir> --sequencing_summary <txt_file>
+   ```bash
+   nextflow run catg-umag/ncov2019-ont-nf -r v2.0.0 -profile docker \
+       --sample_data <csv_file> --artic_use_nanopolish \
+       --fast5_directory <fast5_dir> --sequencing_summary <txt_file>
    ```
 
 4. Esperar a que finalice la ejecución. En `results/` se encontrarán los archivos entregados por el pipeline.
 
 ## Requisitos
 
-- [Nextflow](https://www.nextflow.io/) (>= 20.07)
-- [Singularity](https://sylabs.io/guides/3.7/admin-guide/) o [Docker](https://www.docker.com/get-started)
-- Guppy (sólo si se desea hacer basecalling, se descarga desde la página de la [comunidad de Oxford Nanopore](https://community.nanoporetech.com/downloads))
+- [Nextflow](https://www.nextflow.io/) (>= 22.04.0)
+- [Apptainer](https://apptainer.org/docs/admin/main/installation.html) o [Docker](https://www.docker.com/get-started)
 
-Debido a Nextflow, los sistemas operativos soportados son GNU/Linux y MacOS. En caso de querer de todas maneras utilizarlo en Windows, es necesario usar [WSL](https://docs.microsoft.com/en-us/windows/wsl/install-win10).
+Debido a Nextflow, los sistemas operativos soportados son GNU/Linux y MacOS. En caso de querer de todas maneras utilizarlo en Windows, es necesario usar [WSL](https://learn.microsoft.com/en-us/windows/wsl/install).
 
 ## Utilización del Pipeline
 
 ### Entradas
 
-Dependiendo del punto de partida existen dos casos:
+Este pipeline está diseñado para trabajar con datos después de haber realizado basecalling y demultiplexación, o sea los archivos FASTQ. De no tener ese proceso realizado, o querer realizar basecalling con mayor calidad, se puede realizar con [este pipeline](https://github.com/catg-umag/ont-basecalling-demultiplexing).
 
-1. Ya se hizo basecalling y demultiplexing ya sea en tiempo real durante la secuenciación u otra instancia, y no se pretende hacer nuevamente. En este se requerirá:
-   - el sub-directorio `pass` del directorio `fast5`
-   - el directorio con el resultado del basecalling + demultiplexing; en este directorio deberían encontrarse los directorios `barcodeXX` correspondientes a cada muestra
-   - el archivo `sequencing_summary.txt` que puede estar dentro del directorio de los datos crudos o con basecalling
-   - un archivo CSV con el detalle de las muestras
-2. Se desea hacer basecalling como parte del pipeline, ya sea porque no se hizo previamente o quiere realizarse basecalling de alta precisión. Hay que tener en consideración que el basecalling de alta precisión en considerablemente más intensivo computacionalmente, por lo que se hace casi indispensable hacerlo utilizando una GPU soportada. En este caso, las entradas son:
-   - el directorio `fast5` en su totalidad
-   - el archivo CSV con el detalle de las muestras
+Entonces, las entradas requeridas son:
+- Un archivo CSV con el detalle de las muestras (ver más abajo)
+- Un archivo FASTQ único por muestra (comprimido o no). Guppy por defecto genera una carpeta con múltiples archivos FASTQ, por lo que si se desea utilizar estos datos, es necesario concatenarlos antes.
+- (Sólo si se desea utilizar Nanopolish en lugar de Medaka). El subdirectorio `pass` del directorio con los archivos FASTQ generados el basecalling, y también el archivo `sequencing_summary.txt`
 
 ### Cómo preparar el archivo de detalle de muestras
 
-Este archivo (en formato CSV) debe contar con al menos dos columnas: `barcode` y `sample`, en el cual se asocie cada barcode a una muestra determinada.
+Este archivo (en formato CSV) debe contar con al menos dos columnas: `sample` y `fastq_file`, en el cual se asocie cada muestra a un archivo FASTQ.
 El campo sample será utilizado para nombrar todos los archivos asociados a cada muestra, por lo que es ideal que sea algo sencillo, ojalá sólo letras y números. Además de las dos columnas requeridas se pueden incluir columnas adicionales, las cuales serán "traspasadas" al resumen final.
 
 Otro conjunto de campos que puede incluir este archivo son relevantes si se desea subir los datos a GISAID. Estos corresponden a cualquiera de las columnas de la plantilla de carga de datos de GISAID (disponible en `data/`), que deben ser indicados con el prefijo `gisaid_` seguido del nombre en la primera fila de la plantilla. Como recomendación, sería conveniente incluir al menos `covv_virs_name`, ya que este campo será utilizado para renombrar las secuencias en el archivo FASTA de forma de que correspondan a los nombres indicados en esta columna, proceso que deberá realizarse de forma manual en caso de no proveer estos valores. Revisar la plantilla para ver cuáles son los campos disponibles y cómo deben ser llenados. Algunas columnas serán llenadas aunque no sean especificadas, éstas son: `fn`, `covv_type`, `covv_passage`, `covv_host`, `covv_seq_technology`, `covv_assembly_method` y `covv_coverage`. Será necesario rellenar manualmente los campos obligatorios que falten para que la plataforma acepte la carga.
@@ -83,24 +77,21 @@ sample,barcode,city,gisaid_covv_virus_name,gisaid_covv_collection_date,gisaid_co
 
 Además de la posibilidad de especificar los inputs, es posible controlar algunos aspectos del pipeline a través de parámetros. El listado de parámetros disponibles es el siguiente:
 
-| Parámetro                      | Requerido | Valor Por defecto            | Descripción                                                                                                                                                    |
-| ------------------------------ | --------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| sample_data                    | si        | ---                          | Archivo delimitado por comas con el detalle de las muestras.                                                                                                   |
-| fast5_directory                | si        | ---                          | Ruta al directorio FAST5 obtenido en la secuenciación. En caso no realizar basecalling, indicar el sub-directorio `pass`.                                      |
-| fastq_directory                | no        | ---                          | Ruta al directorio FASTQ obtenido en la secuenciación en caso de que se haya realizado basecalling y no se desee realizar basecalling.                         |
-| sequencing_summary             | no        | ---                          | Resumen obtenido en el proceso de basecalling. Requerido si se proveen datos en FASTQ.                                                                         |
-| run_id                         | no        | ""                           | ID opcional para la secuenciación que se utilizará como sufijo en los nombres de archivos de los resúmenes y recopilaciones de datos.                          |
-| guppy_basecalling_config       | no        | dna_r9.4.1_450bps_hac.cfg    | Configuración a utilizar para realizar el basecalling con guppy. Más información sobre las configuraciones disponibles en el manual de Guppy.                  |
-| guppy_barcodes                 | no        | "EXP-NBD104 EXP-NBD114"      | Kit(s) utilizado(s) en la secuenciación para la multiplexación.                                                                                                |
-| guppy_demux_both_ends          | no        | true                         | Valor que indica si se debe exigir la presencia de ambos barcodes (5' y 3') al momento de hacer demultiplexing.                                                |
-| guppy_cpus                     | no        | 16                           | Cantidad de CPUs a utilizar en los procesos asociados a Guppy.                                                                                                 |
-| guppy_basecalling_extra_config | no        | "--device auto"              | Opciones extras para Guppy al hacer basecalling (por ejemplo, parámetros asociados a la configuración de la GPU).                                              |
-| artic_primers_scheme           | no        | nCoV-2019/V3                 | Esquema de primers de ARTIC utilizado al construir la librería.                                                                                                |
-| artic_normalise                | no        | 500                          | Valor para establecer un valor de cobertura objetivo en el pipeline de ARTIC.                                                                                  |
-| gisaid_template                | no        | data/20210222_EpiCoV....xlsx | Ruta al template utilizado para subir muestras a GISAID (disponible en repositorio).                                                                           |
-| gisaid_submission_enabled      | no        | true                         | Habilitar (o no) la generación de los archivos preparados para cargar datos a GISAID.                                                                          |
-| publish_minimum_completion     | no        | 95                           | Valor entre 0 - 100 que indica el porcentaje de bases cubiertas respecto al genoma que se requerirá para la inclusión de estas muestras en la carga de GISAID. |
-| output_directory               | no        | results                      | Directorio en el cual se almacenaran los resultados.                                                                                                           |
+| Parámetro                  | Requerido | Valor Por defecto            | Descripción                                                                                                                                                    |
+| -------------------------- | --------- | ---------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| sample_data                | sí        | ---                          | Archivo delimitado por comas con el detalle de las muestras.                                                                                                   |
+| fast5_directory            | no        | ---                          | Ruta al subdirectorio `pass` de FAST5 obtenido en la secuenciación, sólo en caso de ocupar Nanopolish.                                                         |
+| sequencing_summary         | no        | ---                          | Resumen obtenido en el proceso de basecalling. Requerido si se proveen datos en FASTQ.                                                                         |
+| run_id                     | no        | ""                           | ID opcional para la secuenciación que se utilizará como sufijo en los nombres de archivos de los resúmenes y recopilaciones de datos.                          |
+| artic_primer_scheme        | no        | SARS-CoV-2/V4.1              | Esquema de primers de ARTIC utilizado al construir la librería.                                                                                                |
+| artic_medaka_model         | no        | r103_hac_g507                | Modelo de Medaka (debe coincidir con el modelo utilizado par el basecalling).                                                                                  |
+| artic_use_nanopolish       | no        | false                        | Usar Nanopolish en lugar de Medaka para el pulido.                                                                                                             |
+| artic_normalise            | no        | 500                          | Valor para establecer un valor de cobertura objetivo en el pipeline de ARTIC.                                                                                  |
+| gisaid_template            | no        | data/20210222_EpiCoV....xlsx | Ruta al template utilizado para subir muestras a GISAID (disponible en repositorio).                                                                           |
+| gisaid_submission_enabled  | no        | true                         | Habilitar (o no) la generación de los archivos preparados para cargar datos a GISAID.                                                                          |
+| publish_minimum_completion | no        | 95                           | Valor entre 0 - 100 que indica el porcentaje de bases cubiertas respecto al genoma que se requerirá para la inclusión de estas muestras en la carga de GISAID. |
+| multiqc_config             | no        | conf/multiqc_config.yaml     | Archivo de configuración de MultiQC (ya se incluye uno).                                                                                                       |
+| output_directory           | no        | results                      | Directorio en el cual se almacenaran los resultados.                                                                                                           |
 
 El listado y lo valores por defecto se encuentran en el archivo `params.default.yml`.
 Los parámetros pueden ser indicados a través de la línea de comandos (por ejemplo `--run_id 20210501A`), pero también pueden pasarse a través de un archivo en formato YAML, se puede utilizar como plantilla el archivo `params.default.yml` (no mover o editar el archivo en sí, ya que es necesario).
@@ -109,17 +100,16 @@ Los parámetros pueden ser indicados a través de la línea de comandos (por eje
 
 El pipeline puede descargarse directamente y e indicar a Nextflow la ruta donde este se encuentra, pero también puede indicarse directamente `catg-umag/ncov2019-ont-n` y una versión a través del argumento `-r`, lo que descargará automáticamente el pipeline. Por ejemplo:
 
-```
-nextflow run catg-umag/ncov2019-ont-nf -r v1.6 -profile singularity ...
+```bash
+nextflow run catg-umag/ncov2019-ont-nf -r v2.0.0 -profile apptainer ...
 ```
 
-Es imperativo utilizar el perfil `singularity` o `docker` para que utilice contenedores para acceder a las herramientas requeridas.
+Es imperativo utilizar el perfil `singularity` o `docker` para que utilice contenedores para acceder a las herramientas requeridas. De lo contrario, no funcionará.
 
-Ejemplo con basecalling utilizando parámetros a través de línea de comandoss:
+Ejemplo con basecalling utilizando parámetros a través de línea de comandos:
 
-```
-nextflow run ncov2019-ont-nf/ -profile singularity --fast5_directory input/fast5/ \
-    --sample_data input/samples.csv --run_id R210505
+```bash
+nextflow run ncov2019-ont-nf/ -profile apptainer --sample_data input/samples.csv --run_id R210505
 ```
 
 Ejemplo utilizando parámetros mediant archivo YAML:
@@ -128,15 +118,14 @@ Ejemplo utilizando parámetros mediant archivo YAML:
 
 ```yaml
 sample_data: input/samples.csv
-fast5_directory: input/fast5/
-fastq_directory: input/demultiplexed/
-sequencing_summary: input/sequencing_summary.txt
+run_id: R210505
+artic_medaka_model: r941_min_hac_g507
 artic_normalise: 1000
 gisaid_submission_enabled: false
 ```
 
-```
-nextflow run ncov2019-ont-nf/ -profile singularity -params-file params.yml
+```bash
+nextflow run ncov2019-ont-nf/ -profile apptainer -params-file params.yml
 ```
 
 El pipeline por defecto se ejecutará de manera local, pero en caso de querer ejecutarlo en un clúster de cómputo que utilice Slurm, puede especificarse mediante el perfil `slurm`. Y no olvidar también el perfil de singularity (este debe estar instalado en el clúster): `-profile slurm,singularity`.
@@ -145,7 +134,7 @@ El pipeline por defecto se ejecutará de manera local, pero en caso de querer ej
 
 Dentro del directorio de resultados (`results/` por defecto), se encontrará lo siguiente:
 
-- `raw_data/`: archivos FASTQ para cada muestra, generado después de los procesos de basecalling, demultiplexing y filtro de largo
+- `fastq_data/`: archivos FASTQ para cada muestra, después de filtros de largo
 - `artic/`: resultados de la ejecución del pipeline de ARTIC para cada una de las muestras
 - `qc/`: métricas de calidad y cobertura del genoma para cada una de las muestras
 - `vcf/`: archivos VCF (variaciones en el genoma) para cada una de las muestras, anotadas con SnpEff
@@ -168,4 +157,4 @@ Si este trabajo te fue de utilidad, puedes citarlo a través del siguiente artí
 - ARTIC y todas sus dependencias
 - Python y sus librerías: biopython, openpyxl, pandas, scipy
 - Herramientas bioinformáticas: FastQC, MultiQC, samtools, SnpEff, Nextclade, Pangolin
-- Otros: Nextflow, unoconv
+- Otros: Nextflow, libreoffice
